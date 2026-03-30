@@ -1,0 +1,65 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: erp_backend
+    restart: unless-stopped
+    ports:
+      - "8000:80"
+    environment:
+      - APP_ENV=production
+      - APP_DEBUG=false
+      - APP_KEY=base64:your_app_key_here
+      - DB_CONNECTION=mysql
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_DATABASE=erp_db
+      - DB_USERNAME=laravel
+      - DB_PASSWORD=secret
+    volumes:
+      - ./backend/storage:/var/www/html/storage
+      - ./backend/bootstrap/cache:/var/www/html/bootstrap/cache
+    depends_on:
+      - db
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    container_name: erp_frontend
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+
+  db:
+    image: mysql:8.0
+    container_name: erp_db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: erp_db
+      MYSQL_USER: laravel
+      MYSQL_PASSWORD: secret
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - db_data:/var/lib/mysql
+    ports:
+      - "3307:3306" # Host port 3307 to avoid conflict
+  # ==================== Lightweight DB Admin ====================
+  adminer:
+    image: adminer:latest
+    container_name: erp_adminer
+    restart: unless-stopped
+    ports:
+      - "8080:8080" # Access at http://localhost:8080
+    environment:
+      ADMINER_DEFAULT_SERVER: db # Auto-connect to your db service
+      ADMINER_DEFAULT_DB: erp_db
+    depends_on:
+      - db
+volumes:
+  db_data:
