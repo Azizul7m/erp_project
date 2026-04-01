@@ -8,7 +8,7 @@ WORKDIR /app
 COPY frontend/package*.json ./
 
 # Install dependencies
-RUN npm ci --only=production
+RUN npm ci
 
 # Copy all frontend files
 COPY frontend/ .
@@ -20,7 +20,7 @@ RUN npm run build
 FROM nginx:alpine
 
 # Copy built React files to Nginx
-COPY --from=builder /app/build /usr/share/nginx/html
+COPY --from=builder /app/dist /usr/share/nginx/html
 
 # Copy custom nginx config for React (SPA routing)
 COPY frontend/docker/nginx.conf /etc/nginx/conf.d/default.conf
