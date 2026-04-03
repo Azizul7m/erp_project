@@ -1,102 +1,36 @@
-# ERP Project - Frontend
-
-This is the frontend component of the ERP project, built using **React 19**, **JavaScript**, and **Vite**.
-
-## Features
-
-- **React 19**: Utilizing the latest React features and optimizations.
-- **Vite 8**: Extremely fast development environment and optimized builds.
-- **React Compiler**: Automatically optimizes your components for better performance.
-- **JavaScript (JSX)**: Simplified development without TypeScript overhead.
-- **ESLint 9**: Modern linting configuration for code quality.
-- **Docker Support**: Containerized environment for consistent deployment.
-
-## Prerequisites
-
-- [Node.js](https://nodejs.org/) (Version 20 or higher recommended)
-- [npm](https://www.npmjs.com/)
-- [Docker](https://www.docker.com/) (Optional, for containerization)
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
 
-### Installation
-
-1. Clone the repository (if not already done).
-2. Navigate to the frontend directory:
-   ```bash
-   cd erp_project/frontend
-   ```
-3. Install dependencies:
-   ```bash
-   npm install
-   ```
-
-### Development
-
-Start the development server with Hot Module Replacement (HMR):
+First, run the development server:
 
 ```bash
 npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
 ```
 
-The application will be available at `http://localhost:5173`.
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-### Production Build
+You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
 
-Create an optimized production build in the `dist/` directory:
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-```bash
-npm run build
-```
+## Learn More
 
-To preview the production build locally:
+To learn more about Next.js, take a look at the following resources:
 
-```bash
-npm run preview
-```
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-### Linting
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-Check for code quality issues:
+## Deploy on Vercel
 
-```bash
-npm run lint
-```
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-## Project Structure
-
-- `src/`: Source code directory.
-  - `main.jsx`: Entry point for the application.
-  - `App.jsx`: Root component.
-  - `assets/`: Static assets (images, icons, etc.).
-- `public/`: Public assets that are served as-is (e.g., `favicon.svg`, `icons.svg`).
-- `docker/`: Docker-related configuration files.
-- `eslint.config.js`: ESLint flat configuration.
-- `vite.config.js`: Vite and Babel configuration.
-
-## Docker
-
-### Building the Image
-
-To build the Docker image for the frontend:
-
-```bash
-docker build -t erp-frontend -f Dockerfile ..
-```
-*(Note: Build context is the parent directory as per the current Dockerfile configuration)*
-
-### Running the Container
-
-```bash
-docker run -p 8080:80 erp-frontend
-```
-
-The application will be accessible at `http://localhost:8080`.
-
-## Tech Stack
-
-- **Framework**: React 19
-- **Build Tool**: Vite 8
-- **Styling**: Vanilla CSS
-- **Linting**: ESLint 9
-- **Compiler**: Babel with React Compiler plugin
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
