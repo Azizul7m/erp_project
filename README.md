@@ -7,7 +7,7 @@ Full-stack ERP starter: **Next.js** frontend, **Laravel 13** REST API, **Postgre
 - Frontend: Next.js (App Router), TypeScript, Tailwind CSS
 - Backend: PHP 8.4 (Dockerfile) / PHP 8.3+ locally, Laravel 13, Laravel Sanctum (Bearer API tokens)
 - Database: PostgreSQL 16
-- Containers: Docker Compose, Nginx + PHP-FPM + Supervisor (backend), Node standalone (frontend)
+- Containers: Docker Compose for development with live reload
 
 ## Repository structure
 
@@ -26,13 +26,27 @@ erp_project/
 - Adminer: http://localhost:8080 (use system **PostgreSQL**, server `db`, DB `erp_db`, user `laravel`, password `secret`)
 - PostgreSQL: `localhost:5433` (maps to port `5432` inside Docker; avoids clashing with a local Postgres install)
 
-## Quick start (Docker)
+## Quick start (Docker development)
 
 ```bash
 docker compose up --build
 ```
 
-On first run the backend container runs `php artisan migrate --force`. Optional demo admin user:
+This starts:
+
+- Frontend dev server: http://localhost:3000
+- Laravel API server: http://localhost:8000
+- Adminer: http://localhost:8080
+- PostgreSQL: localhost:5433
+
+The setup is development-oriented:
+
+- frontend source is bind-mounted into the Next.js container
+- backend source is bind-mounted into the Laravel container
+- `vendor`, `node_modules`, and `.next` are stored in Docker volumes
+- the backend runs migrations automatically on startup
+
+Optional demo admin user:
 
 ```bash
 docker compose exec backend php artisan db:seed --force
@@ -55,6 +69,18 @@ Authenticated (`Authorization: Bearer <token>`):
 - Customers / products: `GET|POST|GET{id}|PUT|DELETE /api/customers`, `/api/products`
 - Orders: `GET|POST /api/orders`, `GET /api/orders/{id}` (POST body: `customer_id`, `items: [{ product_id, quantity }]`, optional `status`)
 - Transactions: `GET|POST /api/transactions`
+
+To stop and remove containers:
+
+```bash
+docker compose down
+```
+
+To stop and also remove the database and dependency volumes:
+
+```bash
+docker compose down -v
+```
 
 ## Local development (without Docker)
 

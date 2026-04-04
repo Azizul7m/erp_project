@@ -6,9 +6,7 @@ export function middleware(request: NextRequest) {
   const token = request.cookies.get("erp_token")?.value;
 
   if (pathname === "/") {
-    const url = request.nextUrl.clone();
-    url.pathname = token ? "/dashboard" : "/login";
-    return NextResponse.redirect(url);
+    return NextResponse.next();
   }
 
   if (pathname.startsWith("/login")) {
