@@ -1,11 +1,11 @@
 # ERP Project
 
-Full-stack ERP starter: **Next.js** frontend, **Laravel 13** REST API, **PostgreSQL**, and Docker Compose.
+Full-stack ERP starter: **Next.js** frontend, **Go Echo** REST API, **PostgreSQL**, and Docker Compose.
 
 ## Stack
 
 - Frontend: Next.js (App Router), TypeScript, Tailwind CSS
-- Backend: PHP 8.4 (Dockerfile) / PHP 8.3+ locally, Laravel 13, Laravel Sanctum (Bearer API tokens)
+- Backend: Go 1.25, Echo, JWT authentication
 - Database: PostgreSQL 16
 - Containers: Docker Compose for development with live reload
 
@@ -14,7 +14,7 @@ Full-stack ERP starter: **Next.js** frontend, **Laravel 13** REST API, **Postgre
 ```text
 erp_project/
 ├── frontend/          # Next.js client
-├── backend/           # Laravel API
+├── backend/           # Go Echo API
 ├── docker-compose.yml
 └── README.md
 ```
@@ -23,7 +23,7 @@ erp_project/
 
 - Frontend: http://localhost:3000
 - Backend API: http://localhost:8000 (routes under `/api/*`)
-- Adminer: http://localhost:8080 (use system **PostgreSQL**, server `db`, DB `erp_db`, user `laravel`, password `secret`)
+- Adminer: http://localhost:8080 (use system **PostgreSQL**, server `db`, DB `erp_db`, user `erp`, password `secret`)
 - PostgreSQL: `localhost:5433` (maps to port `5432` inside Docker; avoids clashing with a local Postgres install)
 
 ## Quick start (Docker development)
@@ -35,24 +35,16 @@ docker compose up --build
 This starts:
 
 - Frontend dev server: http://localhost:3000
-- Laravel API server: http://localhost:8000
+- Echo API server: http://localhost:8000
 - Adminer: http://localhost:8080
 - PostgreSQL: localhost:5433
 
 The setup is development-oriented:
 
 - frontend source is bind-mounted into the Next.js container
-- backend source is bind-mounted into the Laravel container
-- `vendor`, `node_modules`, and `.next` are stored in Docker volumes
-- the backend runs migrations automatically on startup
-
-Optional demo admin user:
-
-```bash
-docker compose exec backend php artisan db:seed --force
-```
-
-**Seeded login:** `admin@erp.local` / `password` (change in production).
+- backend source is bind-mounted into the Go container
+- Go module cache, `node_modules`, and `.next` are stored in Docker volumes
+- the backend creates tables automatically on startup
 
 You can also **register** via `POST /api/register` or sign up from the Next.js app if you add a register page.
 
@@ -88,17 +80,20 @@ docker compose down -v
 
 ```bash
 cd backend
-composer install
+GOFLAGS=-mod=mod go mod tidy
 cp .env.example .env
-php artisan key:generate
 ```
 
-Ensure PostgreSQL matches `.env`, then:
+Ensure PostgreSQL matches the environment variables below, then:
 
 ```bash
-php artisan migrate
-php artisan db:seed   # optional admin user
-php artisan serve
+export DB_HOST=127.0.0.1
+export DB_PORT=5432
+export DB_NAME=erp_db
+export DB_USER=erp
+export DB_PASSWORD=secret
+export JWT_SECRET=change-me
+GOFLAGS=-mod=mod go run ./cmd/api
 ```
 
 ### Frontend
@@ -115,4 +110,4 @@ Default dev server: http://localhost:3000
 
 ## CORS
 
-`backend/config/cors.php` allows `http://localhost:3000` and `http://127.0.0.1:3000` for the SPA.
+Set `CORS_ORIGIN` in the backend environment to the frontend origin, for example `http://localhost:3000`.

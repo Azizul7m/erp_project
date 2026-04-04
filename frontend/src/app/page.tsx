@@ -19,7 +19,7 @@ export default async function Home() {
                 ERP Project
               </p>
               <p className="mt-2 text-sm text-slate-300">
-                Next.js, Laravel, PostgreSQL
+                Next.js, Go Echo, PostgreSQL
               </p>
             </div>
             <nav className="flex items-center gap-3 text-sm">

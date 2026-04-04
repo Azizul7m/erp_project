@@ -76,7 +76,9 @@ export default function OrderDetailPage() {
         </div>
       </dl>
       <p className="mt-6 text-sm text-slate-500">
-        Line items can be shown here when the API includes <code className="rounded bg-slate-100 px-1">order_items</code> in the JSON payload.
+        {order.items?.length
+          ? `Items: ${order.items.map((item) => `${item.quantity} x product #${item.product_id}`).join(", ")}`
+          : "No line items returned."}
       </p>
     </div>
   );

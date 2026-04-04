@@ -1,37 +1,13 @@
-FROM php:8.4-cli-alpine
+FROM golang:1.25-alpine
 
-RUN apk add --no-cache \
-    bash \
-    curl \
-    git \
-    libpng-dev \
-    libjpeg-turbo-dev \
-    libwebp-dev \
-    freetype-dev \
-    postgresql-dev \
-    linux-headers \
-    unzip \
-    zip
+WORKDIR /app
+ENV GOFLAGS=-mod=mod
 
-RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
-    && docker-php-ext-install -j$(nproc) \
-        bcmath \
-        exif \
-        gd \
-        pcntl \
-        pdo_pgsql \
-        sockets
-
-COPY --from=composer:2.8 /usr/bin/composer /usr/bin/composer
-
-WORKDIR /var/www/html
-
-COPY backend/ .
-RUN composer install --no-interaction --prefer-dist
-
-COPY backend/docker/dev-entrypoint.sh /usr/local/bin/dev-entrypoint.sh
-RUN chmod +x /usr/local/bin/dev-entrypoint.sh
+COPY backend/go.mod backend/go.sum* ./
+RUN go mod download
+COPY backend/ ./
+RUN go build -o /usr/local/bin/erp-api ./cmd/api
 
 EXPOSE 8000
 
-ENTRYPOINT ["/usr/local/bin/dev-entrypoint.sh"]
+CMD ["erp-api"]

@@ -1,57 +1,21 @@
-# backend/Dockerfile
+FROM golang:1.25-alpine AS builder
 
-FROM php:8.4-fpm-alpine
+WORKDIR /app
+ENV GOFLAGS=-mod=mod
 
-# Install system dependencies
-RUN apk add --no-cache \
-    nginx \
-    supervisor \
-    curl \
-    libpng-dev \
-    libjpeg-turbo-dev \
-    libwebp-dev \
-    freetype-dev \
-    postgresql-dev \
-    linux-headers \
-    zip \
-    unzip \
-    git
+COPY backend/go.mod backend/go.sum* ./
+RUN go mod download
 
-# Install PHP extensions
-RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
-    && docker-php-ext-install -j$(nproc) \
-        pdo_pgsql \
-        gd \
-        bcmath \
-        opcache \
-        exif \
-        pcntl \
-        sockets
+COPY backend/ ./
+RUN CGO_ENABLED=0 GOOS=linux go build -o /erp-api ./cmd/api
 
-# Clear cache
-RUN rm -rf /var/cache/apk/*
+FROM alpine:3.21
 
-WORKDIR /var/www/html
+WORKDIR /app
+ENV GOFLAGS=-mod=mod
 
-# Copy the backend application before Composer runs because Laravel's
-# Composer scripts call artisan during install.
-COPY backend/ .
+COPY --from=builder /erp-api /usr/local/bin/erp-api
 
-# Install composer dependencies
-COPY --from=composer:2.8 /usr/bin/composer /usr/bin/composer
-RUN composer install --no-dev --no-interaction --no-progress --optimize-autoloader
+EXPOSE 8000
 
-# Set permissions
-RUN chown -R www-data:www-data /var/www/html \
-    && chmod -R 755 storage \
-    && chmod -R 755 bootstrap/cache
-
-# Copy Nginx and Supervisor configs
-COPY backend/docker/nginx.conf /etc/nginx/http.d/default.conf
-COPY backend/docker/supervisord.conf /etc/supervisord.conf
-COPY backend/docker/entrypoint.sh /usr/local/bin/entrypoint.sh
-RUN chmod +x /usr/local/bin/entrypoint.sh
-
-EXPOSE 80
-
-ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+CMD ["erp-api"]

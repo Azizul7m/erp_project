@@ -1,6 +1,7 @@
-# 🧠 ERP Web Application (Next.js + Laravel + PostgreSQL)
+# 🧠 ERP Web Application (Next.js + Go Echo + PostgreSQL)
 
 ## 🎯 Project Goal
+
 Build a **modular ERP web application** inspired by the provided Excel system.
 
 > ⚠️ Note: This is a **BSc CSE defense project**, so full enterprise-level features are NOT required. Focus on core modules, clean architecture, and working functionality.
@@ -8,10 +9,11 @@ Build a **modular ERP web application** inspired by the provided Excel system.
 ---
 
 ## 🏗️ Tech Stack
+
 - **Frontend:** Next.js (App Router, TypeScript, Tailwind CSS)
-- **Backend:** Laravel (REST API)
+- **Backend:** Golang Echo (REST API)
 - **Database:** PostgreSQL
-- **Authentication:** JWT or Laravel Sanctum
+- **Authentication:** JWT
 - **State Management:** React Context / Zustand
 - **API Communication:** Axios / Fetch
 
@@ -20,6 +22,7 @@ Build a **modular ERP web application** inspired by the provided Excel system.
 ## 📦 Core Modules
 
 ### ✅ MUST HAVE
+
 - Authentication & Users
 - Dashboard (basic stats)
 - Customers Management
@@ -28,6 +31,7 @@ Build a **modular ERP web application** inspired by the provided Excel system.
 - Transactions (income/expense)
 
 ### ⚡ OPTIONAL
+
 - Vendors
 - Payroll
 - Inventory tracking
@@ -37,9 +41,10 @@ Build a **modular ERP web application** inspired by the provided Excel system.
 
 ## 🧩 System Architecture
 
-### 🔹 Backend (Laravel)
+### 🔹 Backend (Go Echo)
 
 #### Models
+
 - User
 - Customer
 - Product
@@ -48,6 +53,7 @@ Build a **modular ERP web application** inspired by the provided Excel system.
 - Transaction
 
 #### Relationships
+
 - User → hasMany Orders
 - Customer → hasMany Orders
 - Order → hasMany OrderItems
@@ -58,6 +64,7 @@ Build a **modular ERP web application** inspired by the provided Excel system.
 ## 🗄️ Database Schema (PostgreSQL)
 
 ### users
+
 - id
 - name
 - email
@@ -66,6 +73,7 @@ Build a **modular ERP web application** inspired by the provided Excel system.
 - created_at
 
 ### customers
+
 - id
 - name
 - phone
@@ -74,6 +82,7 @@ Build a **modular ERP web application** inspired by the provided Excel system.
 - created_at
 
 ### products
+
 - id
 - name
 - price
@@ -81,6 +90,7 @@ Build a **modular ERP web application** inspired by the provided Excel system.
 - created_at
 
 ### orders
+
 - id
 - customer_id
 - user_id
@@ -89,6 +99,7 @@ Build a **modular ERP web application** inspired by the provided Excel system.
 - created_at
 
 ### order_items
+
 - id
 - order_id
 - product_id
@@ -96,6 +107,7 @@ Build a **modular ERP web application** inspired by the provided Excel system.
 - price
 
 ### transactions
+
 - id
 - type (income/expense)
 - amount
@@ -107,28 +119,33 @@ Build a **modular ERP web application** inspired by the provided Excel system.
 ## 🔌 API Endpoints
 
 ### Auth
+
 - POST /api/register
 - POST /api/login
 - GET /api/user
 
 ### Customers
+
 - GET /api/customers
 - POST /api/customers
 - PUT /api/customers/{id}
 - DELETE /api/customers/{id}
 
 ### Products
+
 - GET /api/products
 - POST /api/products
 - PUT /api/products/{id}
 - DELETE /api/products/{id}
 
 ### Orders
+
 - GET /api/orders
 - POST /api/orders
 - GET /api/orders/{id}
 
 ### Transactions
+
 - GET /api/transactions
 - POST /api/transactions
 
@@ -137,6 +154,7 @@ Build a **modular ERP web application** inspired by the provided Excel system.
 ## 🎨 Frontend (Next.js)
 
 ### Pages
+
 - /login
 - /dashboard
 - /customers
@@ -147,6 +165,7 @@ Build a **modular ERP web application** inspired by the provided Excel system.
 ---
 
 ## 🖥️ UI Requirements
+
 - Sidebar navigation
 - Dashboard cards (sales, orders, customers)
 - Tables with CRUD
@@ -156,6 +175,7 @@ Build a **modular ERP web application** inspired by the provided Excel system.
 ---
 
 ## 🔐 Authentication Flow
+
 1. Login → receive token
 2. Store token (cookie/localStorage)
 3. Protect routes using middleware
@@ -163,6 +183,7 @@ Build a **modular ERP web application** inspired by the provided Excel system.
 ---
 
 ## 🔄 Order Flow
+
 1. Select customer
 2. Add products (quantity)
 3. Calculate total
@@ -172,6 +193,7 @@ Build a **modular ERP web application** inspired by the provided Excel system.
 ---
 
 ## 📊 Dashboard Features
+
 - Total customers
 - Total products
 - Total orders
@@ -180,6 +202,7 @@ Build a **modular ERP web application** inspired by the provided Excel system.
 ---
 
 ## 🧪 Validation Rules
+
 - Required fields
 - Numeric validation (price, amount)
 - Email format validation
@@ -189,37 +212,44 @@ Build a **modular ERP web application** inspired by the provided Excel system.
 ## 🚀 Development Steps
 
 ### Step 1: Backend
-- Setup Laravel
+
+- Setup Go Echo
 - Configure PostgreSQL
 - Create migrations & models
 - Build API controllers
 - Test with Postman
 
 ### Step 2: Frontend
+
 - Setup Next.js
 - Configure Tailwind
 - Build layout (sidebar + header)
 
 ### Step 3: Authentication
+
 - Login page
 - Token handling
 - Protected routes
 
 ### Step 4: CRUD Modules
+
 1. Customers
 2. Products
 3. Orders
 4. Transactions
 
 ### Step 5: Dashboard
+
 - Fetch summary data
 - Display cards & charts
 
 ---
 
 ## 🎓 Defense Key Points
+
 Ensure your project demonstrates:
-- MVC architecture (Laravel)
+
+- Layered backend architecture (Go Echo)
 - REST API design
 - Database normalization
 - Authentication system
@@ -228,14 +258,15 @@ Ensure your project demonstrates:
 ---
 
 ## 🎯 Simplifications Allowed
+
 - No complex payroll
 - No real-time system
-- No microservices
 - Simple UI is acceptable
 
 ---
 
 ## ⭐ Bonus Features
+
 - Role-based access (Admin/User)
 - Export reports (CSV)
 - Charts (Recharts)
@@ -243,6 +274,7 @@ Ensure your project demonstrates:
 ---
 
 ## 🧠 Final Instruction for Cursor
+
 Generate clean, modular, production-style code.  
 Focus on readability, separation of concerns, and proper API structure.  
 Avoid unnecessary complexity.

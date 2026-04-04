@@ -86,7 +86,7 @@ export default function DashboardPage() {
     <div>
       <h2 className="text-xl font-semibold text-slate-900">Dashboard</h2>
       <p className="mt-1 text-sm text-slate-600">
-        Summary counts from your Laravel API (when endpoints are available).
+        Summary counts from your Echo API.
       </p>
       <div className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <Card

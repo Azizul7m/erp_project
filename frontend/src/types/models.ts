@@ -21,7 +21,16 @@ export type Order = {
   user_id?: number | null;
   total_amount: number | string;
   status?: string | null;
+  items?: OrderItem[];
   created_at?: string;
+};
+
+export type OrderItem = {
+  id?: number;
+  order_id?: number;
+  product_id: number;
+  quantity: number;
+  price?: number | string;
 };
 
 export type Transaction = {

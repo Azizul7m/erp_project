@@ -53,7 +53,7 @@ export default function LoginPage() {
       <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
         <h1 className="text-2xl font-semibold text-slate-900">Sign in</h1>
         <p className="mt-1 text-sm text-slate-500">
-          Use your Laravel API credentials. API:{" "}
+          Use your ERP API credentials. API:{" "}
           <span className="font-mono text-slate-700">{getApiBaseUrl()}</span>
         </p>
         <form onSubmit={onSubmit} className="mt-6 flex flex-col gap-4">
@@ -92,7 +92,7 @@ export default function LoginPage() {
           </button>
         </form>
         <p className="mt-6 text-center text-sm text-slate-600">
-          Don't have an account?{" "}
+          Don&apos;t have an account?{" "}
           <Link href="/register" className="font-semibold text-slate-900 hover:underline">
             Sign up
           </Link>
