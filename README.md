@@ -23,7 +23,6 @@ erp_project/
 
 - Frontend: http://localhost:3000
 - Backend API: http://localhost:8000 (routes under `/api/*`)
-- Adminer: http://localhost:8080 (use system **PostgreSQL**, server `db`, DB `erp_db`, user `erp`, password `secret`)
 - PostgreSQL: `localhost:5433` (maps to port `5432` inside Docker; avoids clashing with a local Postgres install)
 
 ## Quick start (Docker development)
@@ -36,7 +35,6 @@ This starts:
 
 - Frontend dev server: http://localhost:3000
 - Echo API server: http://localhost:8000
-- Adminer: http://localhost:8080
 - PostgreSQL: localhost:5433
 
 The setup is development-oriented:

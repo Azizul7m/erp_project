@@ -7,6 +7,15 @@ export type Customer = {
   created_at?: string;
 };
 
+export type Vendor = {
+  id: number;
+  name: string;
+  phone?: string | null;
+  email?: string | null;
+  address?: string | null;
+  created_at?: string;
+};
+
 export type Product = {
   id: number;
   name: string;

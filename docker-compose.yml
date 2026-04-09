@@ -65,19 +65,6 @@ services:
       retries: 10
       start_period: 15s
 
-  adminer:
-    image: adminer:latest
-    container_name: erp_adminer
-    restart: unless-stopped
-    ports:
-      - "8080:8080"
-    environment:
-      ADMINER_DEFAULT_SERVER: db
-      ADMINER_DEFAULT_DB: erp_db
-    depends_on:
-      db:
-        condition: service_healthy
-
 volumes:
   frontend_node_modules:
   frontend_next:

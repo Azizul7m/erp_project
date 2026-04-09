@@ -23,6 +23,15 @@ type Customer struct {
 	CreatedAt time.Time `json:"created_at"`
 }
 
+type Vendor struct {
+	ID        int64     `json:"id"`
+	Name      string    `json:"name"`
+	Phone     *string   `json:"phone"`
+	Email     *string   `json:"email"`
+	Address   *string   `json:"address"`
+	CreatedAt time.Time `json:"created_at"`
+}
+
 type Product struct {
 	ID        int64     `json:"id"`
 	Name      string    `json:"name"`

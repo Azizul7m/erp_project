@@ -76,6 +76,18 @@ func RunMigrations(db *sql.DB) error {
 		`UPDATE customers SET created_at = NOW() WHERE created_at IS NULL`,
 		`ALTER TABLE customers ALTER COLUMN created_at SET DEFAULT NOW()`,
 		`ALTER TABLE customers ALTER COLUMN created_at SET NOT NULL`,
+		`CREATE TABLE IF NOT EXISTS vendors (
+			id BIGSERIAL PRIMARY KEY,
+			name TEXT NOT NULL,
+			phone TEXT,
+			email TEXT,
+			address TEXT,
+			created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+		)`,
+		`ALTER TABLE vendors ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()`,
+		`UPDATE vendors SET created_at = NOW() WHERE created_at IS NULL`,
+		`ALTER TABLE vendors ALTER COLUMN created_at SET DEFAULT NOW()`,
+		`ALTER TABLE vendors ALTER COLUMN created_at SET NOT NULL`,
 		`CREATE TABLE IF NOT EXISTS products (
 			id BIGSERIAL PRIMARY KEY,
 			name TEXT NOT NULL,

@@ -8,3 +8,8 @@
 bin/
 coverage.out
 Thumbs.db
+vendor/
+storage/
+bootstrap/
+database/
+.phpunit.result.cache
