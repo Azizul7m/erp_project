@@ -12,10 +12,22 @@ import (
 )
 
 func (app *App) HandleListOrders(c echo.Context) error {
-	rows, err := app.DB.Query(
-		`SELECT id, customer_id, user_id, total_amount::float8, status, created_at
-		 FROM orders ORDER BY id DESC`,
-	)
+	query := searchQuery(c)
+	sqlQuery := `SELECT o.id, o.customer_id, o.user_id, o.total_amount::float8, o.status, o.created_at
+		FROM orders o
+		LEFT JOIN customers cst ON cst.id = o.customer_id`
+	args := []any{}
+	if query != "" {
+		sqlQuery += `
+		WHERE CAST(o.id AS TEXT) ILIKE $1
+		   OR COALESCE(cst.name, '') ILIKE $1
+		   OR COALESCE(o.status, '') ILIKE $1
+		   OR CAST(o.total_amount AS TEXT) ILIKE $1`
+		args = append(args, searchPattern(query))
+	}
+	sqlQuery += ` ORDER BY o.id DESC`
+
+	rows, err := app.DB.Query(sqlQuery, args...)
 	if err != nil {
 		return serverError(c, err)
 	}

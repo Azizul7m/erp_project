@@ -10,10 +10,20 @@ import (
 )
 
 func (app *App) HandleListTransactions(c echo.Context) error {
-	rows, err := app.DB.Query(
-		`SELECT id, type, amount::float8, description, created_at
-		 FROM transactions ORDER BY id DESC`,
-	)
+	query := searchQuery(c)
+	sqlQuery := `SELECT id, type, amount::float8, description, created_at
+		FROM transactions`
+	args := []any{}
+	if query != "" {
+		sqlQuery += `
+		WHERE type ILIKE $1
+		   OR CAST(amount AS TEXT) ILIKE $1
+		   OR COALESCE(description, '') ILIKE $1`
+		args = append(args, searchPattern(query))
+	}
+	sqlQuery += ` ORDER BY id DESC`
+
+	rows, err := app.DB.Query(sqlQuery, args...)
 	if err != nil {
 		return serverError(c, err)
 	}

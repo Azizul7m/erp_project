@@ -67,6 +67,7 @@ type Transaction struct {
 }
 
 type AuthClaims struct {
-	UserID int64 `json:"user_id"`
+	UserID int64  `json:"user_id"`
+	Role   string `json:"role"`
 	jwt.RegisteredClaims
 }

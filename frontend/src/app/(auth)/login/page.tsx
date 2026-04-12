@@ -3,13 +3,16 @@
 import { useState } from "react";
 import toast from "react-hot-toast";
 import Link from "next/link";
-import { apiFetch, extractToken, getApiBaseUrl } from "@/lib/api";
+import { useAuth } from "@/components/AuthProvider";
+import { apiFetch, extractToken, getApiBaseUrl, unwrapRecord } from "@/lib/api";
 import { setAuthToken } from "@/lib/auth";
+import type { User } from "@/types/models";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const { refreshUser } = useAuth();
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -38,7 +41,11 @@ export default function LoginPage() {
         toast.error("Login succeeded but no token was returned");
         return;
       }
-      setAuthToken(token);
+      const user = unwrapRecord<User>(
+        typeof json === "object" && json ? (json as { user?: unknown }).user ?? json : null
+      );
+      setAuthToken(token, user?.role);
+      await refreshUser();
       toast.success("Signed in");
       window.location.href = "/dashboard";
     } catch (err) {

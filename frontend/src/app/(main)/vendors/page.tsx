@@ -1,6 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { useAuth } from "@/components/AuthProvider";
+import { RoleGuard } from "@/components/RoleGuard";
 import toast from "react-hot-toast";
 import { apiFetch, unwrapList } from "@/lib/api";
 import type { Vendor } from "@/types/models";
@@ -21,15 +23,23 @@ const emptyForm: VendorForm = {
 };
 
 export default function VendorsPage() {
+  const { user, loading: authLoading } = useAuth();
   const [rows, setRows] = useState<Vendor[]>([]);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<Vendor | null>(null);
   const [form, setForm] = useState<VendorForm>(emptyForm);
+  const [query, setQuery] = useState("");
 
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const json = await apiFetch<unknown>("/api/vendors");
+      const params = new URLSearchParams();
+      if (query.trim()) {
+        params.set("q", query.trim());
+      }
+      const json = await apiFetch<unknown>(
+        `/api/vendors${params.size ? `?${params.toString()}` : ""}`
+      );
       setRows(unwrapList<Vendor>(json));
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Failed to load vendors");
@@ -37,11 +47,17 @@ export default function VendorsPage() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [query]);
 
   useEffect(() => {
-    load();
-  }, [load]);
+    if (authLoading) return;
+    if (user?.role !== "admin") {
+      setLoading(false);
+      setRows([]);
+      return;
+    }
+    void load();
+  }, [authLoading, load, user?.role]);
 
   function openCreate() {
     setEditing(null);
@@ -111,7 +127,9 @@ export default function VendorsPage() {
   }
 
   return (
-    <div>
+    <RoleGuard allowedRoles={["admin"]}>
+      <div>
+      {authLoading ? <p className="mb-4 text-slate-600">Loading…</p> : null}
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <h2 className="text-xl font-semibold text-slate-900">Vendors</h2>
@@ -128,6 +146,15 @@ export default function VendorsPage() {
 
       <div className="mt-6 grid gap-8 lg:grid-cols-[1fr_minmax(260px,360px)]">
         <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+          <div className="border-b border-slate-200 px-4 py-3">
+            <input
+              type="search"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search by name, phone, email, or address"
+              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+            />
+          </div>
           <table className="w-full text-left text-sm">
             <thead className="bg-slate-50 text-xs font-semibold uppercase text-slate-500">
               <tr>
@@ -147,7 +174,7 @@ export default function VendorsPage() {
               ) : rows.length === 0 ? (
                 <tr>
                   <td colSpan={4} className="px-4 py-8 text-center text-slate-500">
-                    No vendors yet.
+                    {query.trim() ? "No vendors match your search." : "No vendors yet."}
                   </td>
                 </tr>
               ) : (
@@ -242,7 +269,7 @@ export default function VendorsPage() {
           </form>
         </div>
       </div>
-    </div>
+      </div>
+    </RoleGuard>
   );
 }
-

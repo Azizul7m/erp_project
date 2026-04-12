@@ -1,3 +1,13 @@
+export type UserRole = "admin" | "customer" | "vendor";
+
+export type User = {
+  id: number;
+  name: string;
+  email: string;
+  role: UserRole;
+  created_at?: string;
+};
+
 export type Customer = {
   id: number;
   name: string;

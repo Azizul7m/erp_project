@@ -1,19 +1,29 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { useAuth } from "@/components/AuthProvider";
 import toast from "react-hot-toast";
 import { apiFetch, unwrapList } from "@/lib/api";
 import type { Product } from "@/types/models";
 
 export default function ProductsPage() {
+  const { user, loading: authLoading } = useAuth();
   const [rows, setRows] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [form, setForm] = useState({ id: 0, name: "", price: "", stock: "" });
+  const [query, setQuery] = useState("");
+  const canManageProducts = user?.role === "admin" || user?.role === "vendor";
 
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const json = await apiFetch<unknown>("/api/products");
+      const params = new URLSearchParams();
+      if (query.trim()) {
+        params.set("q", query.trim());
+      }
+      const json = await apiFetch<unknown>(
+        `/api/products${params.size ? `?${params.toString()}` : ""}`
+      );
       setRows(unwrapList<Product>(json));
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Failed to load products");
@@ -21,7 +31,7 @@ export default function ProductsPage() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [query]);
 
   useEffect(() => {
     load();
@@ -42,6 +52,10 @@ export default function ProductsPage() {
 
   async function save(e: React.FormEvent) {
     e.preventDefault();
+    if (!canManageProducts) {
+      toast.error("You do not have permission to manage products");
+      return;
+    }
     if (!form.name.trim()) {
       toast.error("Name is required");
       return;
@@ -81,6 +95,10 @@ export default function ProductsPage() {
   }
 
   async function removeRow(id: number) {
+    if (!canManageProducts) {
+      toast.error("You do not have permission to delete products");
+      return;
+    }
     if (!confirm("Delete this product?")) return;
     try {
       await apiFetch(`/api/products/${id}`, { method: "DELETE" });
@@ -96,19 +114,39 @@ export default function ProductsPage() {
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <h2 className="text-xl font-semibold text-slate-900">Products</h2>
-          <p className="mt-1 text-sm text-slate-600">Price and stock with validation.</p>
+          <p className="mt-1 text-sm text-slate-600">
+            {canManageProducts
+              ? "Price and stock with validation."
+              : "Read-only product catalog for your role."}
+          </p>
         </div>
-        <button
-          type="button"
-          onClick={openCreate}
-          className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800"
-        >
-          New product
-        </button>
+        {canManageProducts ? (
+          <button
+            type="button"
+            onClick={openCreate}
+            className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800"
+          >
+            New product
+          </button>
+        ) : null}
       </div>
 
-      <div className="mt-6 grid gap-8 lg:grid-cols-[1fr_minmax(260px,360px)]">
+      {authLoading ? <p className="mt-6 text-slate-600">Loading…</p> : null}
+      <div
+        className={`mt-6 grid gap-8 ${
+          canManageProducts ? "lg:grid-cols-[1fr_minmax(260px,360px)]" : ""
+        }`}
+      >
         <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+          <div className="border-b border-slate-200 px-4 py-3">
+            <input
+              type="search"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search by name, price, or stock"
+              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+            />
+          </div>
           <table className="w-full text-left text-sm">
             <thead className="bg-slate-50 text-xs font-semibold uppercase text-slate-500">
               <tr>
@@ -128,7 +166,7 @@ export default function ProductsPage() {
               ) : rows.length === 0 ? (
                 <tr>
                   <td colSpan={4} className="px-4 py-8 text-center text-slate-500">
-                    No products yet.
+                    {query.trim() ? "No products match your search." : "No products yet."}
                   </td>
                 </tr>
               ) : (
@@ -138,21 +176,27 @@ export default function ProductsPage() {
                     <td className="px-4 py-3 text-slate-600">{String(r.price)}</td>
                     <td className="px-4 py-3 text-slate-600">{r.stock}</td>
                     <td className="px-4 py-3 text-right">
-                      <button
-                        type="button"
-                        onClick={() => openEdit(r)}
-                        className="text-slate-700 underline-offset-2 hover:underline"
-                      >
-                        Edit
-                      </button>
-                      <span className="mx-2 text-slate-300">|</span>
-                      <button
-                        type="button"
-                        onClick={() => removeRow(r.id)}
-                        className="text-red-600 underline-offset-2 hover:underline"
-                      >
-                        Delete
-                      </button>
+                      {canManageProducts ? (
+                        <>
+                          <button
+                            type="button"
+                            onClick={() => openEdit(r)}
+                            className="text-slate-700 underline-offset-2 hover:underline"
+                          >
+                            Edit
+                          </button>
+                          <span className="mx-2 text-slate-300">|</span>
+                          <button
+                            type="button"
+                            onClick={() => removeRow(r.id)}
+                            className="text-red-600 underline-offset-2 hover:underline"
+                          >
+                            Delete
+                          </button>
+                        </>
+                      ) : (
+                        <span className="text-slate-400">Read only</span>
+                      )}
                     </td>
                   </tr>
                 ))
@@ -161,7 +205,8 @@ export default function ProductsPage() {
           </table>
         </div>
 
-        <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+        {canManageProducts ? (
+          <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
           <h3 className="font-semibold text-slate-900">
             {form.id ? "Edit product" : "New product"}
           </h3>
@@ -203,7 +248,8 @@ export default function ProductsPage() {
               Save
             </button>
           </form>
-        </div>
+          </div>
+        ) : null}
       </div>
     </div>
   );

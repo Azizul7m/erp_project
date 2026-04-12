@@ -12,7 +12,21 @@ import (
 )
 
 func (app *App) HandleListVendors(c echo.Context) error {
-	rows, err := app.DB.Query(`SELECT id, name, phone, email, address, created_at FROM vendors ORDER BY id DESC`)
+	query := searchQuery(c)
+	sqlQuery := `SELECT id, name, phone, email, address, created_at
+		FROM vendors`
+	args := []any{}
+	if query != "" {
+		sqlQuery += `
+		WHERE name ILIKE $1
+		   OR COALESCE(phone, '') ILIKE $1
+		   OR COALESCE(email, '') ILIKE $1
+		   OR COALESCE(address, '') ILIKE $1`
+		args = append(args, searchPattern(query))
+	}
+	sqlQuery += ` ORDER BY id DESC`
+
+	rows, err := app.DB.Query(sqlQuery, args...)
 	if err != nil {
 		return serverError(c, err)
 	}
@@ -107,4 +121,3 @@ func (app *App) HandleDeleteVendor(c echo.Context) error {
 	}
 	return c.NoContent(http.StatusNoContent)
 }
-

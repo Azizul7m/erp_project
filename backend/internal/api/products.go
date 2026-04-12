@@ -12,7 +12,20 @@ import (
 )
 
 func (app *App) HandleListProducts(c echo.Context) error {
-	rows, err := app.DB.Query(`SELECT id, name, price::float8, stock, created_at FROM products ORDER BY id DESC`)
+	query := searchQuery(c)
+	sqlQuery := `SELECT id, name, price::float8, stock, created_at
+		FROM products`
+	args := []any{}
+	if query != "" {
+		sqlQuery += `
+		WHERE name ILIKE $1
+		   OR CAST(price AS TEXT) ILIKE $1
+		   OR CAST(stock AS TEXT) ILIKE $1`
+		args = append(args, searchPattern(query))
+	}
+	sqlQuery += ` ORDER BY id DESC`
+
+	rows, err := app.DB.Query(sqlQuery, args...)
 	if err != nil {
 		return serverError(c, err)
 	}

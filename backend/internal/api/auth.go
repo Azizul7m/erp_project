@@ -38,7 +38,19 @@ func (app *App) AuthMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 			return c.JSON(http.StatusUnauthorized, map[string]string{"message": "invalid token claims"})
 		}
 
+		role := normalizeRole(claims.Role)
+		if role == "" {
+			role, err = app.lookupUserRole(claims.UserID)
+			if err != nil {
+				if errors.Is(err, sql.ErrNoRows) {
+					return c.JSON(http.StatusUnauthorized, map[string]string{"message": "user not found"})
+				}
+				return serverError(c, err)
+			}
+		}
+
 		c.Set("userID", claims.UserID)
+		c.Set("userRole", role)
 		return next(c)
 	}
 }
@@ -48,6 +60,7 @@ func (app *App) HandleRegister(c echo.Context) error {
 		Name     string `json:"name"`
 		Email    string `json:"email"`
 		Password string `json:"password"`
+		Role     string `json:"role"`
 	}
 	if err := c.Bind(&input); err != nil {
 		return badRequest(c, "invalid request body")
@@ -58,6 +71,11 @@ func (app *App) HandleRegister(c echo.Context) error {
 		return badRequest(c, "name, email, and password (min 8 chars) are required")
 	}
 
+	role, err := app.resolveRegistrationRole(input.Role)
+	if err != nil {
+		return serverError(c, err)
+	}
+
 	passwordHash, err := bcrypt.GenerateFromPassword([]byte(input.Password), bcrypt.DefaultCost)
 	if err != nil {
 		return serverError(c, err)
@@ -66,9 +84,9 @@ func (app *App) HandleRegister(c echo.Context) error {
 	var created models.User
 	err = app.DB.QueryRow(
 		`INSERT INTO users (name, email, password, password_hash, role)
-		 VALUES ($1, $2, $3, $4, 'admin')
+		 VALUES ($1, $2, $3, $4, $5)
 		 RETURNING id, name, email, role, created_at`,
-		input.Name, input.Email, string(passwordHash), string(passwordHash),
+		input.Name, input.Email, string(passwordHash), string(passwordHash), role,
 	).Scan(&created.ID, &created.Name, &created.Email, &created.Role, &created.CreatedAt)
 	if err != nil {
 		if strings.Contains(strings.ToLower(err.Error()), "duplicate") {
@@ -77,7 +95,7 @@ func (app *App) HandleRegister(c echo.Context) error {
 		return serverError(c, err)
 	}
 
-	token, err := app.issueToken(created.ID)
+	token, err := app.issueToken(created.ID, created.Role)
 	if err != nil {
 		return serverError(c, err)
 	}
@@ -115,7 +133,7 @@ func (app *App) HandleLogin(c echo.Context) error {
 		return c.JSON(http.StatusUnauthorized, map[string]string{"message": "invalid credentials"})
 	}
 
-	token, err := app.issueToken(dbUser.ID)
+	token, err := app.issueToken(dbUser.ID, dbUser.Role)
 	if err != nil {
 		return serverError(c, err)
 	}
@@ -142,9 +160,10 @@ func (app *App) HandleCurrentUser(c echo.Context) error {
 	return c.JSON(http.StatusOK, user)
 }
 
-func (app *App) issueToken(userID int64) (string, error) {
+func (app *App) issueToken(userID int64, role string) (string, error) {
 	claims := models.AuthClaims{
 		UserID: userID,
+		Role:   normalizeRole(role),
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(7 * 24 * time.Hour)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),

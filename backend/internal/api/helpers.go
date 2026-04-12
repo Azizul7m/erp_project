@@ -23,6 +23,14 @@ func cleanNullable(value *string) any {
 	return trimmed
 }
 
+func searchQuery(c echo.Context) string {
+	return strings.TrimSpace(c.QueryParam("q"))
+}
+
+func searchPattern(value string) string {
+	return "%" + value + "%"
+}
+
 func badRequest(c echo.Context, message string) error {
 	return c.JSON(http.StatusBadRequest, map[string]string{"message": message})
 }

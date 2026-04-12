@@ -4,15 +4,19 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { apiFetch, extractToken, getApiBaseUrl } from "@/lib/api";
+import { useAuth } from "@/components/AuthProvider";
+import { apiFetch, extractToken, getApiBaseUrl, unwrapRecord } from "@/lib/api";
 import { setAuthToken } from "@/lib/auth";
+import type { User, UserRole } from "@/types/models";
 
 export default function RegisterPage() {
   const router = useRouter();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [role, setRole] = useState<UserRole>("customer");
   const [loading, setLoading] = useState(false);
+  const { refreshUser } = useAuth();
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -38,14 +42,18 @@ export default function RegisterPage() {
     try {
       const json = await apiFetch<unknown>("/api/register", {
         method: "POST",
-        body: JSON.stringify({ name, email, password }),
+        body: JSON.stringify({ name, email, password, role }),
       });
       const token = extractToken(json);
       if (!token) {
         toast.error("Registration succeeded but no token was returned");
         return;
       }
-      setAuthToken(token);
+      const user = unwrapRecord<User>(
+        typeof json === "object" && json ? (json as { user?: unknown }).user ?? json : null
+      );
+      setAuthToken(token, user?.role);
+      await refreshUser();
       toast.success("Account created");
       router.push("/dashboard");
       router.refresh();
@@ -90,6 +98,20 @@ export default function RegisterPage() {
               onChange={(e) => setEmail(e.target.value)}
               className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-slate-900 dark:text-white outline-none ring-slate-400 focus:ring-2"
             />
+          </div>
+          <div>
+            <label htmlFor="role" className="block text-sm font-medium text-slate-700">
+              Role
+            </label>
+            <select
+              id="role"
+              value={role}
+              onChange={(e) => setRole(e.target.value as UserRole)}
+              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-slate-900 outline-none ring-slate-400 focus:ring-2"
+            >
+              <option value="customer">Customer</option>
+              <option value="vendor">Vendor</option>
+            </select>
           </div>
           <div>
             <label htmlFor="password" className="block text-sm font-medium text-slate-700">
