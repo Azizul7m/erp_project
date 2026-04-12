@@ -1,4 +1,4 @@
-export type UserRole = "admin" | "customer" | "vendor";
+export type UserRole = "admin" | "customer" | "employee" | "vendor";
 
 export type User = {
   id: number;
@@ -23,6 +23,18 @@ export type Vendor = {
   phone?: string | null;
   email?: string | null;
   address?: string | null;
+  created_at?: string;
+};
+
+export type Employee = {
+  id: number;
+  user_id?: number | null;
+  name: string;
+  email: string;
+  phone?: string | null;
+  position: string;
+  salary: number | string;
+  hire_date?: string;
   created_at?: string;
 };
 
@@ -57,5 +69,6 @@ export type Transaction = {
   type: "income" | "expense" | string;
   amount: number | string;
   description?: string | null;
+  order_id?: number | null;
   created_at?: string;
 };

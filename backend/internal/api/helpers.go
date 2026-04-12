@@ -16,7 +16,11 @@ func cleanNullable(value *string) any {
 	if value == nil {
 		return nil
 	}
-	trimmed := strings.TrimSpace(*value)
+	return nullIfBlank(*value)
+}
+
+func nullIfBlank(value string) any {
+	trimmed := strings.TrimSpace(value)
 	if trimmed == "" {
 		return nil
 	}

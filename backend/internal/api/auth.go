@@ -61,12 +61,16 @@ func (app *App) HandleRegister(c echo.Context) error {
 		Email    string `json:"email"`
 		Password string `json:"password"`
 		Role     string `json:"role"`
+		Phone    string `json:"phone"`
+		Position string `json:"position"`
 	}
 	if err := c.Bind(&input); err != nil {
 		return badRequest(c, "invalid request body")
 	}
 	input.Name = strings.TrimSpace(input.Name)
 	input.Email = strings.TrimSpace(strings.ToLower(input.Email))
+	input.Phone = strings.TrimSpace(input.Phone)
+	input.Position = normalizeEmployeePosition(input.Position)
 	if input.Name == "" || input.Email == "" || len(input.Password) < 8 {
 		return badRequest(c, "name, email, and password (min 8 chars) are required")
 	}
@@ -75,14 +79,23 @@ func (app *App) HandleRegister(c echo.Context) error {
 	if err != nil {
 		return serverError(c, err)
 	}
+	if role == RoleEmployee && input.Position == "" {
+		return badRequest(c, "position is required for employee sign up")
+	}
 
 	passwordHash, err := bcrypt.GenerateFromPassword([]byte(input.Password), bcrypt.DefaultCost)
 	if err != nil {
 		return serverError(c, err)
 	}
 
+	tx, err := app.DB.BeginTx(c.Request().Context(), nil)
+	if err != nil {
+		return serverError(c, err)
+	}
+	defer tx.Rollback()
+
 	var created models.User
-	err = app.DB.QueryRow(
+	err = tx.QueryRow(
 		`INSERT INTO users (name, email, password, password_hash, role)
 		 VALUES ($1, $2, $3, $4, $5)
 		 RETURNING id, name, email, role, created_at`,
@@ -92,6 +105,38 @@ func (app *App) HandleRegister(c echo.Context) error {
 		if strings.Contains(strings.ToLower(err.Error()), "duplicate") {
 			return c.JSON(http.StatusConflict, map[string]string{"message": "email already exists"})
 		}
+		return serverError(c, err)
+	}
+
+	if role == RoleCustomer {
+		_, err = tx.Exec(
+			`INSERT INTO customers (id, name, email) VALUES ($1, $2, $3)`,
+			created.ID, created.Name, created.Email,
+		)
+		if err != nil {
+			return serverError(c, err)
+		}
+	}
+	if role == RoleEmployee {
+		_, err = tx.Exec(
+			`INSERT INTO employees (user_id, name, email, phone, position, salary)
+			 VALUES ($1, $2, $3, $4, $5, $6)`,
+			created.ID,
+			created.Name,
+			created.Email,
+			nullIfBlank(input.Phone),
+			input.Position,
+			salaryForPosition(input.Position),
+		)
+		if err != nil {
+			if strings.Contains(strings.ToLower(err.Error()), "duplicate") {
+				return c.JSON(http.StatusConflict, map[string]string{"message": "employee record already exists for this email"})
+			}
+			return serverError(c, err)
+		}
+	}
+
+	if err := tx.Commit(); err != nil {
 		return serverError(c, err)
 	}
 

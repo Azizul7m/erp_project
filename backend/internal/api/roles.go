@@ -11,6 +11,7 @@ import (
 const (
 	RoleAdmin    = "admin"
 	RoleCustomer = "customer"
+	RoleEmployee = "employee"
 	RoleVendor   = "vendor"
 )
 
@@ -20,6 +21,8 @@ func normalizeRole(value string) string {
 		return RoleAdmin
 	case RoleCustomer:
 		return RoleCustomer
+	case RoleEmployee:
+		return RoleEmployee
 	case RoleVendor:
 		return RoleVendor
 	default:
