@@ -151,6 +151,19 @@ func RunMigrations(db *sql.DB) error {
 		`UPDATE transactions SET created_at = NOW() WHERE created_at IS NULL`,
 		`ALTER TABLE transactions ALTER COLUMN created_at SET DEFAULT NOW()`,
 		`ALTER TABLE transactions ALTER COLUMN created_at SET NOT NULL`,
+		`ALTER TABLE transactions ADD COLUMN IF NOT EXISTS order_id BIGINT REFERENCES orders(id) ON DELETE SET NULL`,
+		`CREATE TABLE IF NOT EXISTS employees (
+			id BIGSERIAL PRIMARY KEY,
+			user_id BIGINT UNIQUE REFERENCES users(id) ON DELETE SET NULL,
+			name TEXT NOT NULL,
+			email TEXT NOT NULL UNIQUE,
+			phone TEXT,
+			position TEXT NOT NULL,
+			salary NUMERIC(12, 2) NOT NULL CHECK (salary >= 0),
+			hire_date DATE NOT NULL DEFAULT CURRENT_DATE,
+			created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+		)`,
+		`ALTER TABLE employees ADD COLUMN IF NOT EXISTS user_id BIGINT UNIQUE REFERENCES users(id) ON DELETE SET NULL`,
 	}
 
 	for _, stmt := range statements {

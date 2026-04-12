@@ -3,6 +3,7 @@ package api
 import (
 	"database/sql"
 	"errors"
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -178,4 +179,91 @@ func (app *App) HandleGetOrder(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, row)
+}
+
+func (app *App) HandleUpdateOrderStatus(c echo.Context) error {
+	id, err := parseID(c.Param("id"))
+	if err != nil {
+		return badRequest(c, "invalid order id")
+	}
+
+	var input struct {
+		Status string `json:"status"`
+	}
+	if err := c.Bind(&input); err != nil {
+		return badRequest(c, "invalid request body")
+	}
+
+	status := strings.ToLower(strings.TrimSpace(input.Status))
+	if status != "completed" && status != "cancelled" {
+		return badRequest(c, "invalid status; must be 'completed' or 'cancelled'")
+	}
+
+	tx, err := app.DB.BeginTx(c.Request().Context(), nil)
+	if err != nil {
+		return serverError(c, err)
+	}
+	defer tx.Rollback()
+
+	var currentStatus string
+	err = tx.QueryRow("SELECT status FROM orders WHERE id = $1 FOR UPDATE", id).Scan(&currentStatus)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return c.JSON(http.StatusNotFound, map[string]string{"message": "order not found"})
+		}
+		return serverError(c, err)
+	}
+
+	if currentStatus != "pending" {
+		return badRequest(c, "only pending orders can be updated")
+	}
+
+	// If cancelling, restore stock
+	if status == "cancelled" {
+		rows, err := tx.Query("SELECT product_id, quantity FROM order_items WHERE order_id = $1", id)
+		if err != nil {
+			return serverError(c, err)
+		}
+		defer rows.Close()
+
+		for rows.Next() {
+			var pid int64
+			var qty int
+			if err := rows.Scan(&pid, &qty); err != nil {
+				return serverError(c, err)
+			}
+			if _, err := tx.Exec("UPDATE products SET stock = stock + $2 WHERE id = $1", pid, qty); err != nil {
+				return serverError(c, err)
+			}
+		}
+	}
+
+	if _, err := tx.Exec("UPDATE orders SET status = $1 WHERE id = $2", status, id); err != nil {
+		return serverError(c, err)
+	}
+
+	// If completed, record income
+	if status == "completed" {
+		var totalAmount float64
+		err = tx.QueryRow("SELECT total_amount::float8 FROM orders WHERE id = $1", id).Scan(&totalAmount)
+		if err != nil {
+			return serverError(c, err)
+		}
+
+		description := fmt.Sprintf("Income from completed order #%d", id)
+		_, err = tx.Exec(
+			`INSERT INTO transactions (type, amount, description, order_id)
+			 VALUES ('income', $1, $2, $3)`,
+			totalAmount, description, id,
+		)
+		if err != nil {
+			return serverError(c, err)
+		}
+	}
+
+	if err := tx.Commit(); err != nil {
+		return serverError(c, err)
+	}
+
+	return c.JSON(http.StatusOK, map[string]string{"message": "order status updated to " + status})
 }

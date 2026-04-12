@@ -5,6 +5,7 @@ import toast from "react-hot-toast";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/components/AuthProvider";
+import { POSITION_OPTIONS, formatMoney, getSalaryForPosition } from "@/lib/employees";
 import { apiFetch, extractToken, getApiBaseUrl, unwrapRecord } from "@/lib/api";
 import { setAuthToken } from "@/lib/auth";
 import type { User, UserRole } from "@/types/models";
@@ -13,8 +14,10 @@ export default function RegisterPage() {
   const router = useRouter();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [role, setRole] = useState<UserRole>("customer");
+  const [position, setPosition] = useState(POSITION_OPTIONS[0]);
   const [loading, setLoading] = useState(false);
   const { refreshUser } = useAuth();
 
@@ -37,12 +40,23 @@ export default function RegisterPage() {
       toast.error("Password must be at least 8 characters");
       return;
     }
+    if (role === "employee" && !position) {
+      toast.error("Position is required for employee signup");
+      return;
+    }
 
     setLoading(true);
     try {
       const json = await apiFetch<unknown>("/api/register", {
         method: "POST",
-        body: JSON.stringify({ name, email, password, role }),
+        body: JSON.stringify({
+          name,
+          email,
+          phone,
+          password,
+          role,
+          position: role === "employee" ? position : undefined,
+        }),
       });
       const token = extractToken(json);
       if (!token) {
@@ -100,6 +114,19 @@ export default function RegisterPage() {
             />
           </div>
           <div>
+            <label htmlFor="phone" className="block text-sm font-medium text-slate-700 ">
+              Phone
+            </label>
+            <input
+              id="phone"
+              type="tel"
+              autoComplete="tel"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-slate-900 dark:text-white outline-none ring-slate-400 focus:ring-2"
+            />
+          </div>
+          <div>
             <label htmlFor="role" className="block text-sm font-medium text-slate-700">
               Role
             </label>
@@ -110,9 +137,35 @@ export default function RegisterPage() {
               className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-slate-900 outline-none ring-slate-400 focus:ring-2"
             >
               <option value="customer">Customer</option>
+              <option value="employee">Employee</option>
               <option value="vendor">Vendor</option>
             </select>
           </div>
+          {role === "employee" ? (
+            <div className="rounded-xl border border-sky-200 bg-sky-50 p-4">
+              <label htmlFor="position" className="block text-sm font-medium text-slate-700">
+                Position
+              </label>
+              <select
+                id="position"
+                value={position}
+                onChange={(e) => setPosition(e.target.value)}
+                className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-slate-900 outline-none ring-slate-400 focus:ring-2"
+              >
+                {POSITION_OPTIONS.map((option) => (
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
+                ))}
+              </select>
+              <p className="mt-3 text-sm text-slate-600">
+                Monthly salary is assigned automatically from the selected position.
+              </p>
+              <p className="mt-1 text-lg font-semibold text-slate-900">
+                Salary: {formatMoney(getSalaryForPosition(position))}
+              </p>
+            </div>
+          ) : null}
           <div>
             <label htmlFor="password" className="block text-sm font-medium text-slate-700">
               Password

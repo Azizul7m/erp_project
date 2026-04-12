@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import Link from "next/link";
 import { useAuth } from "@/components/AuthProvider";
 import { RoleGuard } from "@/components/RoleGuard";
 import toast from "react-hot-toast";
@@ -85,7 +86,7 @@ export default function TransactionsPage() {
               type="search"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search by type, amount, or description"
+              placeholder="Search by type, amount, description, or order ID"
               className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
             />
           </div>
@@ -95,19 +96,20 @@ export default function TransactionsPage() {
                 <th className="px-4 py-3">Type</th>
                 <th className="px-4 py-3">Amount</th>
                 <th className="px-4 py-3">Description</th>
+                <th className="px-4 py-3">Order</th>
                 <th className="px-4 py-3">Date</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
               {loading ? (
                 <tr>
-                  <td colSpan={4} className="px-4 py-8 text-center text-slate-500">
+                  <td colSpan={5} className="px-4 py-8 text-center text-slate-500">
                     Loading…
                   </td>
                 </tr>
               ) : rows.length === 0 ? (
                 <tr>
-                  <td colSpan={4} className="px-4 py-8 text-center text-slate-500">
+                  <td colSpan={5} className="px-4 py-8 text-center text-slate-500">
                     {query.trim() ? "No transactions match your search." : "No transactions yet."}
                   </td>
                 </tr>
@@ -119,6 +121,13 @@ export default function TransactionsPage() {
                       {String(r.amount)}
                     </td>
                     <td className="px-4 py-3 text-slate-600">{r.description ?? "—"}</td>
+                    <td className="px-4 py-3 text-slate-600">
+                      {r.order_id ? (
+                        <Link href={`/orders/${r.order_id}`} className="text-slate-800 underline hover:text-slate-600">
+                          #{r.order_id}
+                        </Link>
+                      ) : "—"}
+                    </td>
                     <td className="px-4 py-3 text-slate-600">
                       {r.created_at ? new Date(r.created_at).toLocaleString() : "—"}
                     </td>

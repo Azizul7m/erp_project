@@ -11,14 +11,15 @@ import (
 
 func (app *App) HandleListTransactions(c echo.Context) error {
 	query := searchQuery(c)
-	sqlQuery := `SELECT id, type, amount::float8, description, created_at
+	sqlQuery := `SELECT id, type, amount::float8, description, order_id, created_at
 		FROM transactions`
 	args := []any{}
 	if query != "" {
 		sqlQuery += `
 		WHERE type ILIKE $1
 		   OR CAST(amount AS TEXT) ILIKE $1
-		   OR COALESCE(description, '') ILIKE $1`
+		   OR COALESCE(description, '') ILIKE $1
+		   OR CAST(order_id AS TEXT) ILIKE $1`
 		args = append(args, searchPattern(query))
 	}
 	sqlQuery += ` ORDER BY id DESC`
@@ -32,7 +33,7 @@ func (app *App) HandleListTransactions(c echo.Context) error {
 	var out []models.Transaction
 	for rows.Next() {
 		var row models.Transaction
-		if err := rows.Scan(&row.ID, &row.Type, &row.Amount, &row.Description, &row.CreatedAt); err != nil {
+		if err := rows.Scan(&row.ID, &row.Type, &row.Amount, &row.Description, &row.OrderID, &row.CreatedAt); err != nil {
 			return serverError(c, err)
 		}
 		out = append(out, row)

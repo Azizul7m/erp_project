@@ -32,6 +32,18 @@ type Vendor struct {
 	CreatedAt time.Time `json:"created_at"`
 }
 
+type Employee struct {
+	ID        int64     `json:"id"`
+	UserID    *int64    `json:"user_id,omitempty"`
+	Name      string    `json:"name"`
+	Email     string    `json:"email"`
+	Phone     *string   `json:"phone"`
+	Position  string    `json:"position"`
+	Salary    float64   `json:"salary"`
+	HireDate  time.Time `json:"hire_date"`
+	CreatedAt time.Time `json:"created_at"`
+}
+
 type Product struct {
 	ID        int64     `json:"id"`
 	Name      string    `json:"name"`
@@ -63,6 +75,7 @@ type Transaction struct {
 	Type        string    `json:"type"`
 	Amount      float64   `json:"amount"`
 	Description *string   `json:"description"`
+	OrderID     *int64    `json:"order_id,omitempty"`
 	CreatedAt   time.Time `json:"created_at"`
 }
 
