@@ -113,8 +113,8 @@ export default function ProductsPage() {
     <div>
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h2 className="text-xl font-semibold text-slate-900">Products</h2>
-          <p className="mt-1 text-sm text-slate-600">
+          <h2 className="text-xl font-semibold text-[var(--text-main)]">Products</h2>
+          <p className="mt-1 text-sm text-[var(--text-muted)]">
             {canManageProducts
               ? "Price and stock with validation."
               : "Read-only product catalog for your role."}
@@ -124,31 +124,31 @@ export default function ProductsPage() {
           <button
             type="button"
             onClick={openCreate}
-            className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800"
+            className="rounded-lg bg-[var(--primary)] px-4 py-2 text-sm font-semibold text-white hover:opacity-90"
           >
             New product
           </button>
         ) : null}
       </div>
 
-      {authLoading ? <p className="mt-6 text-slate-600">Loading…</p> : null}
+      {authLoading ? <p className="mt-6 text-[var(--text-muted)]">Loading…</p> : null}
       <div
         className={`mt-6 grid gap-8 ${
           canManageProducts ? "lg:grid-cols-[1fr_minmax(260px,360px)]" : ""
         }`}
       >
-        <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-          <div className="border-b border-slate-200 px-4 py-3">
+        <div className="overflow-hidden rounded-xl border border-[var(--border-main)] bg-[var(--bg-card)] shadow-sm">
+          <div className="border-b border-[var(--border-main)] px-4 py-3">
             <input
               type="search"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search by name, price, or stock"
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+              className="w-full rounded-lg border border-[var(--border-main)] px-3 py-2 text-sm"
             />
           </div>
           <table className="w-full text-left text-sm">
-            <thead className="bg-slate-50 text-xs font-semibold uppercase text-slate-500">
+            <thead className="bg-[var(--bg-card)] text-xs font-semibold uppercase text-[var(--text-muted)]">
               <tr>
                 <th className="px-4 py-3">Name</th>
                 <th className="px-4 py-3">Price</th>
@@ -156,36 +156,36 @@ export default function ProductsPage() {
                 <th className="px-4 py-3 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-[var(--border-main)]">
               {loading ? (
                 <tr>
-                  <td colSpan={4} className="px-4 py-8 text-center text-slate-500">
+                  <td colSpan={4} className="px-4 py-8 text-center text-[var(--text-muted)]">
                     Loading…
                   </td>
                 </tr>
               ) : rows.length === 0 ? (
                 <tr>
-                  <td colSpan={4} className="px-4 py-8 text-center text-slate-500">
+                  <td colSpan={4} className="px-4 py-8 text-center text-[var(--text-muted)]">
                     {query.trim() ? "No products match your search." : "No products yet."}
                   </td>
                 </tr>
               ) : (
                 rows.map((r) => (
-                  <tr key={r.id} className="hover:bg-slate-50/80">
-                    <td className="px-4 py-3 font-medium text-slate-900">{r.name}</td>
-                    <td className="px-4 py-3 text-slate-600">{String(r.price)}</td>
-                    <td className="px-4 py-3 text-slate-600">{r.stock}</td>
+                  <tr key={r.id} className="hover:bg-[var(--bg-card)]/80">
+                    <td className="px-4 py-3 font-medium text-[var(--text-main)]">{r.name}</td>
+                    <td className="px-4 py-3 text-[var(--text-muted)]">{String(r.price)}</td>
+                    <td className="px-4 py-3 text-[var(--text-muted)]">{r.stock}</td>
                     <td className="px-4 py-3 text-right">
                       {canManageProducts ? (
                         <>
                           <button
                             type="button"
                             onClick={() => openEdit(r)}
-                            className="text-slate-700 underline-offset-2 hover:underline"
+                            className="text-[var(--text-main)] opacity-80 underline-offset-2 hover:underline"
                           >
                             Edit
                           </button>
-                          <span className="mx-2 text-slate-300">|</span>
+                          <span className="mx-2 text-[var(--border-main)]">|</span>
                           <button
                             type="button"
                             onClick={() => removeRow(r.id)}
@@ -195,7 +195,7 @@ export default function ProductsPage() {
                           </button>
                         </>
                       ) : (
-                        <span className="text-slate-400">Read only</span>
+                        <span className="text-[var(--text-muted)]">Read only</span>
                       )}
                     </td>
                   </tr>
@@ -206,44 +206,44 @@ export default function ProductsPage() {
         </div>
 
         {canManageProducts ? (
-          <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-          <h3 className="font-semibold text-slate-900">
+          <div className="rounded-xl border border-[var(--border-main)] bg-[var(--bg-card)] p-5 shadow-sm">
+          <h3 className="font-semibold text-[var(--text-main)]">
             {form.id ? "Edit product" : "New product"}
           </h3>
           <form onSubmit={save} className="mt-4 flex flex-col gap-3">
             <div>
-              <label className="text-xs font-medium text-slate-600">Name *</label>
+              <label className="text-xs font-medium text-[var(--text-muted)]">Name *</label>
               <input
                 value={form.name}
                 onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
-                className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+                className="mt-1 w-full rounded-lg border border-[var(--border-main)] px-3 py-2 text-sm"
               />
             </div>
             <div>
-              <label className="text-xs font-medium text-slate-600">Price *</label>
+              <label className="text-xs font-medium text-[var(--text-muted)]">Price *</label>
               <input
                 type="number"
                 step="0.01"
                 min="0"
                 value={form.price}
                 onChange={(e) => setForm((f) => ({ ...f, price: e.target.value }))}
-                className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+                className="mt-1 w-full rounded-lg border border-[var(--border-main)] px-3 py-2 text-sm"
               />
             </div>
             <div>
-              <label className="text-xs font-medium text-slate-600">Stock *</label>
+              <label className="text-xs font-medium text-[var(--text-muted)]">Stock *</label>
               <input
                 type="number"
                 min="0"
                 step="1"
                 value={form.stock}
                 onChange={(e) => setForm((f) => ({ ...f, stock: e.target.value }))}
-                className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+                className="mt-1 w-full rounded-lg border border-[var(--border-main)] px-3 py-2 text-sm"
               />
             </div>
             <button
               type="submit"
-              className="mt-2 rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800"
+              className="mt-2 rounded-lg bg-[var(--primary)] px-4 py-2 text-sm font-semibold text-white hover:opacity-90"
             >
               Save
             </button>

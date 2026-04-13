@@ -116,31 +116,31 @@ export default function OrdersPage() {
     <div>
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h2 className="text-xl font-semibold text-slate-900">Orders</h2>
-          <p className="mt-1 max-w-2xl text-sm text-slate-600">
+          <h2 className="text-xl font-semibold text-[var(--text-main)]">Orders</h2>
+          <p className="mt-1 max-w-2xl text-sm text-[var(--text-muted)]">
             Create orders from customers and products, then inspect the saved order detail.
           </p>
         </div>
       </div>
 
-      {authLoading ? <p className="mt-6 text-slate-600">Loading…</p> : null}
+      {authLoading ? <p className="mt-6 text-[var(--text-muted)]">Loading…</p> : null}
       <div
         className={`mt-6 grid gap-8 ${
           canCreateOrders ? "lg:grid-cols-[minmax(0,1fr)_380px]" : ""
         }`}
       >
-        <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-          <div className="border-b border-slate-200 px-4 py-3">
+        <div className="overflow-hidden rounded-xl border border-[var(--border-main)] bg-[var(--bg-card)] shadow-sm">
+          <div className="border-b border-[var(--border-main)] px-4 py-3">
             <input
               type="search"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search by order ID, customer, status, or total"
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+              className="w-full rounded-lg border border-[var(--border-main)] px-3 py-2 text-sm"
             />
           </div>
           <table className="w-full text-left text-sm">
-            <thead className="bg-slate-50 text-xs font-semibold uppercase text-slate-500">
+            <thead className="bg-[var(--bg-card)] text-xs font-semibold uppercase text-[var(--text-muted)]">
               <tr>
                 <th className="px-4 py-3">ID</th>
                 <th className="px-4 py-3">Customer</th>
@@ -150,29 +150,29 @@ export default function OrdersPage() {
                 <th className="px-4 py-3 text-right">Detail</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-[var(--border-main)]">
               {loading ? (
                 <tr>
-                  <td colSpan={6} className="px-4 py-8 text-center text-slate-500">
+                  <td colSpan={6} className="px-4 py-8 text-center text-[var(--text-muted)]">
                     Loading…
                   </td>
                 </tr>
               ) : rows.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-4 py-8 text-center text-slate-500">
+                  <td colSpan={6} className="px-4 py-8 text-center text-[var(--text-muted)]">
                     {query.trim() ? "No orders match your search." : "No orders yet."}
                   </td>
                 </tr>
               ) : (
                 rows.map((r) => (
-                  <tr key={r.id} className="hover:bg-slate-50/80">
+                  <tr key={r.id} className="hover:bg-[var(--bg-card)]/80">
                     <td className="px-4 py-3 font-mono text-slate-800">{r.id}</td>
-                    <td className="px-4 py-3 text-slate-600">
+                    <td className="px-4 py-3 text-[var(--text-muted)]">
                       {r.customer_id ? customerNameById.get(r.customer_id) ?? `#${r.customer_id}` : "—"}
                     </td>
-                    <td className="px-4 py-3 text-slate-900">{String(r.total_amount)}</td>
-                    <td className="px-4 py-3 text-slate-600">{r.status ?? "—"}</td>
-                    <td className="px-4 py-3 text-slate-600">
+                    <td className="px-4 py-3 text-[var(--text-main)]">{String(r.total_amount)}</td>
+                    <td className="px-4 py-3 text-[var(--text-muted)]">{r.status ?? "—"}</td>
+                    <td className="px-4 py-3 text-[var(--text-muted)]">
                       {r.created_at ? new Date(r.created_at).toLocaleString() : "—"}
                     </td>
                     <td className="px-4 py-3 text-right">
@@ -191,15 +191,15 @@ export default function OrdersPage() {
         </div>
 
         {canCreateOrders ? (
-          <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-          <h3 className="font-semibold text-slate-900">Create order</h3>
+          <div className="rounded-xl border border-[var(--border-main)] bg-[var(--bg-card)] p-5 shadow-sm">
+          <h3 className="font-semibold text-[var(--text-main)]">Create order</h3>
           <form onSubmit={createOrder} className="mt-4 flex flex-col gap-4">
             <div>
-              <label className="text-xs font-medium text-slate-600">Customer *</label>
+              <label className="text-xs font-medium text-[var(--text-muted)]">Customer *</label>
               <select
                 value={customerId}
                 onChange={(e) => setCustomerId(e.target.value)}
-                className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+                className="mt-1 w-full rounded-lg border border-[var(--border-main)] px-3 py-2 text-sm"
               >
                 <option value="">Select customer</option>
                 {customers.map((customer) => (
@@ -211,11 +211,11 @@ export default function OrdersPage() {
             </div>
 
             <div>
-              <label className="text-xs font-medium text-slate-600">Status</label>
+              <label className="text-xs font-medium text-[var(--text-muted)]">Status</label>
               <select
                 value={status}
                 onChange={(e) => setStatus(e.target.value)}
-                className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+                className="mt-1 w-full rounded-lg border border-[var(--border-main)] px-3 py-2 text-sm"
               >
                 <option value="pending">Pending</option>
                 <option value="completed">Completed</option>
@@ -225,13 +225,13 @@ export default function OrdersPage() {
 
             <div className="space-y-3">
               {items.map((item, index) => (
-                <div key={index} className="rounded-lg border border-slate-200 p-3">
+                <div key={index} className="rounded-lg border border-[var(--border-main)] p-3">
                   <div>
-                    <label className="text-xs font-medium text-slate-600">Product *</label>
+                    <label className="text-xs font-medium text-[var(--text-muted)]">Product *</label>
                     <select
                       value={item.product_id}
                       onChange={(e) => updateItem(index, "product_id", e.target.value)}
-                      className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+                      className="mt-1 w-full rounded-lg border border-[var(--border-main)] px-3 py-2 text-sm"
                     >
                       <option value="">Select product</option>
                       {products.map((product) => (
@@ -242,14 +242,14 @@ export default function OrdersPage() {
                     </select>
                   </div>
                   <div className="mt-3">
-                    <label className="text-xs font-medium text-slate-600">Quantity *</label>
+                    <label className="text-xs font-medium text-[var(--text-muted)]">Quantity *</label>
                     <input
                       type="number"
                       min="1"
                       step="1"
                       value={item.quantity}
                       onChange={(e) => updateItem(index, "quantity", e.target.value)}
-                      className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+                      className="mt-1 w-full rounded-lg border border-[var(--border-main)] px-3 py-2 text-sm"
                     />
                   </div>
                   {items.length > 1 ? (
@@ -268,7 +268,7 @@ export default function OrdersPage() {
             <button
               type="button"
               onClick={addItem}
-              className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700"
+              className="rounded-lg border border-[var(--border-main)] px-4 py-2 text-sm font-medium text-[var(--text-main)] opacity-80"
             >
               Add another item
             </button>
@@ -276,7 +276,7 @@ export default function OrdersPage() {
             <button
               type="submit"
               disabled={saving || loading}
-              className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800 disabled:opacity-60"
+              className="rounded-lg bg-[var(--primary)] px-4 py-2 text-sm font-semibold text-white hover:opacity-90 disabled:opacity-60"
             >
               {saving ? "Creating…" : "Create order"}
             </button>

@@ -60,16 +60,16 @@ export default function OrderDetailPage() {
   }
 
   if (loading) {
-    return <p className="text-slate-600">Loading…</p>;
+    return <p className="text-[var(--text-muted)]">Loading…</p>;
   }
 
   if (!order) {
     return (
       <div>
-        <Link href="/orders" className="text-sm font-medium text-slate-700 hover:underline">
+        <Link href="/orders" className="text-sm font-medium text-[var(--text-main)] opacity-80 hover:underline">
           ← Back to orders
         </Link>
-        <p className="mt-4 text-slate-600">Order not found.</p>
+        <p className="mt-4 text-[var(--text-muted)]">Order not found.</p>
       </div>
     );
   }
@@ -80,10 +80,10 @@ export default function OrderDetailPage() {
     <div>
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <Link href="/orders" className="text-sm font-medium text-slate-700 hover:underline">
+          <Link href="/orders" className="text-sm font-medium text-[var(--text-main)] opacity-80 hover:underline">
             ← Back to orders
           </Link>
-          <h2 className="mt-4 text-xl font-semibold text-slate-900">Order #{order.id}</h2>
+          <h2 className="mt-4 text-xl font-semibold text-[var(--text-main)]">Order #{order.id}</h2>
         </div>
         {canUpdate && (
           <div className="flex gap-3">
@@ -97,7 +97,7 @@ export default function OrderDetailPage() {
             <button
               onClick={() => updateStatus("completed")}
               disabled={updating}
-              className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800 disabled:opacity-50"
+              className="rounded-lg bg-[var(--primary)] px-4 py-2 text-sm font-semibold text-white hover:opacity-90 disabled:opacity-50"
             >
               Confirm Order
             </button>
@@ -107,25 +107,25 @@ export default function OrderDetailPage() {
 
       <dl className="mt-6 grid max-w-md gap-2 text-sm">
         <div className="flex justify-between gap-4 border-b border-slate-100 py-2">
-          <dt className="text-slate-500">Customer ID</dt>
-          <dd className="font-medium text-slate-900">{order.customer_id ?? "—"}</dd>
+          <dt className="text-[var(--text-muted)]">Customer ID</dt>
+          <dd className="font-medium text-[var(--text-main)]">{order.customer_id ?? "—"}</dd>
         </div>
         <div className="flex justify-between gap-4 border-b border-slate-100 py-2">
-          <dt className="text-slate-500">Total</dt>
-          <dd className="font-medium text-slate-900">{String(order.total_amount)}</dd>
+          <dt className="text-[var(--text-muted)]">Total</dt>
+          <dd className="font-medium text-[var(--text-main)]">{String(order.total_amount)}</dd>
         </div>
         <div className="flex justify-between gap-4 border-b border-slate-100 py-2">
-          <dt className="text-slate-500">Status</dt>
-          <dd className="font-medium text-slate-900">{order.status ?? "—"}</dd>
+          <dt className="text-[var(--text-muted)]">Status</dt>
+          <dd className="font-medium text-[var(--text-main)]">{order.status ?? "—"}</dd>
         </div>
         <div className="flex justify-between gap-4 py-2">
-          <dt className="text-slate-500">Created</dt>
-          <dd className="font-medium text-slate-900">
+          <dt className="text-[var(--text-muted)]">Created</dt>
+          <dd className="font-medium text-[var(--text-main)]">
             {order.created_at ? new Date(order.created_at).toLocaleString() : "—"}
           </dd>
         </div>
       </dl>
-      <p className="mt-6 text-sm text-slate-500">
+      <p className="mt-6 text-sm text-[var(--text-muted)]">
         {order.items?.length
           ? `Items: ${order.items.map((item) => `${item.quantity} x product #${item.product_id}`).join(", ")}`
           : "No line items returned."}

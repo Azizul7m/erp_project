@@ -130,34 +130,34 @@ export default function EmployeesPage() {
   return (
     <RoleGuard allowedRoles={["admin"]}>
       <div>
-      {authLoading ? <p className="mb-4 text-slate-600">Loading…</p> : null}
+      {authLoading ? <p className="mb-4 text-[var(--text-muted)]">Loading…</p> : null}
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h2 className="text-xl font-semibold text-slate-900">Employees</h2>
-          <p className="mt-1 text-sm text-slate-600">Manage your workforce, positions, and salaries.</p>
+          <h2 className="text-xl font-semibold text-[var(--text-main)]">Employees</h2>
+          <p className="mt-1 text-sm text-[var(--text-muted)]">Manage your workforce, positions, and salaries.</p>
         </div>
         <button
           type="button"
           onClick={openCreate}
-          className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800"
+          className="rounded-lg bg-[var(--primary)] px-4 py-2 text-sm font-semibold text-white hover:opacity-90"
         >
           New employee
         </button>
       </div>
 
       <div className="mt-6 grid gap-8 lg:grid-cols-[1fr_minmax(260px,360px)]">
-        <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-          <div className="border-b border-slate-200 px-4 py-3">
+        <div className="overflow-hidden rounded-xl border border-[var(--border-main)] bg-[var(--bg-card)] shadow-sm">
+          <div className="border-b border-[var(--border-main)] px-4 py-3">
             <input
               type="search"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search by name, email, or position"
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+              className="w-full rounded-lg border border-[var(--border-main)] px-3 py-2 text-sm"
             />
           </div>
           <table className="w-full text-left text-sm">
-            <thead className="bg-slate-50 text-xs font-semibold uppercase text-slate-500">
+            <thead className="bg-[var(--bg-card)] text-xs font-semibold uppercase text-[var(--text-muted)]">
               <tr>
                 <th className="px-4 py-3">Name</th>
                 <th className="px-4 py-3">Position</th>
@@ -165,37 +165,37 @@ export default function EmployeesPage() {
                 <th className="px-4 py-3 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-[var(--border-main)]">
               {loading ? (
                 <tr>
-                  <td colSpan={4} className="px-4 py-8 text-center text-slate-500">
+                  <td colSpan={4} className="px-4 py-8 text-center text-[var(--text-muted)]">
                     Loading…
                   </td>
                 </tr>
               ) : rows.length === 0 ? (
                 <tr>
-                  <td colSpan={4} className="px-4 py-8 text-center text-slate-500">
+                  <td colSpan={4} className="px-4 py-8 text-center text-[var(--text-muted)]">
                     {query.trim() ? "No employees match your search." : "No employees yet."}
                   </td>
                 </tr>
               ) : (
                 rows.map((r) => (
-                  <tr key={r.id} className="hover:bg-slate-50/80">
+                  <tr key={r.id} className="hover:bg-[var(--bg-card)]/80">
                     <td className="px-4 py-3">
-                      <div className="font-medium text-slate-900">{r.name}</div>
-                      <div className="text-xs text-slate-500">{r.email}</div>
+                      <div className="font-medium text-[var(--text-main)]">{r.name}</div>
+                      <div className="text-xs text-[var(--text-muted)]">{r.email}</div>
                     </td>
-                    <td className="px-4 py-3 text-slate-600">{r.position}</td>
-                    <td className="px-4 py-3 font-mono text-slate-600">${formatMoney(Number(r.salary))}</td>
+                    <td className="px-4 py-3 text-[var(--text-muted)]">{r.position}</td>
+                    <td className="px-4 py-3 font-mono text-[var(--text-muted)]">${formatMoney(Number(r.salary))}</td>
                     <td className="px-4 py-3 text-right">
                       <button
                         type="button"
                         onClick={() => openEdit(r)}
-                        className="text-slate-700 underline-offset-2 hover:underline"
+                        className="text-[var(--text-main)] opacity-80 underline-offset-2 hover:underline"
                       >
                         Edit
                       </button>
-                      <span className="mx-2 text-slate-300">|</span>
+                      <span className="mx-2 text-[var(--border-main)]">|</span>
                       <button
                         type="button"
                         onClick={() => removeRow(r.id)}
@@ -211,42 +211,42 @@ export default function EmployeesPage() {
           </table>
         </div>
 
-        <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-          <h3 className="font-semibold text-slate-900">
+        <div className="rounded-xl border border-[var(--border-main)] bg-[var(--bg-card)] p-5 shadow-sm">
+          <h3 className="font-semibold text-[var(--text-main)]">
             {form.id ? "Edit employee" : "New employee"}
           </h3>
           <form onSubmit={save} className="mt-4 flex flex-col gap-3">
             <div>
-              <label className="text-xs font-medium text-slate-600">Name *</label>
+              <label className="text-xs font-medium text-[var(--text-muted)]">Name *</label>
               <input
                 value={form.name}
                 onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
-                className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+                className="mt-1 w-full rounded-lg border border-[var(--border-main)] px-3 py-2 text-sm"
               />
             </div>
             <div>
-              <label className="text-xs font-medium text-slate-600">Email *</label>
+              <label className="text-xs font-medium text-[var(--text-muted)]">Email *</label>
               <input
                 type="email"
                 value={form.email}
                 onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
-                className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+                className="mt-1 w-full rounded-lg border border-[var(--border-main)] px-3 py-2 text-sm"
               />
             </div>
             <div>
-              <label className="text-xs font-medium text-slate-600">Phone</label>
+              <label className="text-xs font-medium text-[var(--text-muted)]">Phone</label>
               <input
                 value={form.phone}
                 onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))}
-                className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+                className="mt-1 w-full rounded-lg border border-[var(--border-main)] px-3 py-2 text-sm"
               />
             </div>
             <div>
-              <label className="text-xs font-medium text-slate-600">Position *</label>
+              <label className="text-xs font-medium text-[var(--text-muted)]">Position *</label>
               <select
                 value={form.position}
                 onChange={(e) => setForm((f) => ({ ...f, position: e.target.value }))}
-                className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+                className="mt-1 w-full rounded-lg border border-[var(--border-main)] px-3 py-2 text-sm"
               >
                 {POSITION_OPTIONS.map((option) => (
                   <option key={option} value={option}>
@@ -267,7 +267,7 @@ export default function EmployeesPage() {
             <div className="flex gap-2 pt-2">
               <button
                 type="submit"
-                className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800"
+                className="rounded-lg bg-[var(--primary)] px-4 py-2 text-sm font-semibold text-white hover:opacity-90"
               >
                 Save
               </button>
@@ -278,7 +278,7 @@ export default function EmployeesPage() {
                     setEditing(null);
                     setForm({ ...emptyForm });
                   }}
-                  className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700"
+                  className="rounded-lg border border-[var(--border-main)] px-4 py-2 text-sm font-medium text-[var(--text-main)] opacity-80"
                 >
                   Cancel
                 </button>
