@@ -61,12 +61,12 @@ function MetricCard({
   tone: string;
 }) {
   return (
-    <article className="rounded-[28px] border border-white/70 bg-white/80 p-5 shadow-[0_18px_60px_-24px_rgba(15,23,42,0.25)] backdrop-blur">
+    <article className="rounded-[28px] border border-[var(--border-main)] bg-[var(--bg-card)] p-5 shadow-[0_18px_60px_-24px_rgba(15,23,42,0.15)] backdrop-blur">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <p className="text-sm font-medium text-slate-500">{label}</p>
-          <p className="mt-3 text-3xl font-semibold tracking-tight text-slate-950">{value}</p>
-          <p className="mt-2 text-sm text-slate-500">{hint}</p>
+          <p className="text-sm font-medium text-[var(--text-muted)]">{label}</p>
+          <p className="mt-3 text-3xl font-semibold tracking-tight text-[var(--text-main)]">{value}</p>
+          <p className="mt-2 text-sm text-[var(--text-muted)]">{hint}</p>
         </div>
         <div className={`flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br ${tone} text-white shadow-lg`}>
           <Icon icon={icon} className="h-7 w-7" />
@@ -86,10 +86,10 @@ function Panel({
   children: ReactNode;
 }) {
   return (
-    <section className="rounded-[32px] border border-white/70 bg-white/80 p-6 shadow-[0_18px_60px_-24px_rgba(15,23,42,0.22)] backdrop-blur">
+    <section className="rounded-[32px] border border-[var(--border-main)] bg-[var(--bg-card)] p-6 shadow-[0_18px_60px_-24px_rgba(15,23,42,0.12)] backdrop-blur">
       <div className="mb-6">
-        <h3 className="text-lg font-semibold text-slate-950">{title}</h3>
-        <p className="mt-1 text-sm text-slate-500">{subtitle}</p>
+        <h3 className="text-lg font-semibold text-[var(--text-main)]">{title}</h3>
+        <p className="mt-1 text-sm text-[var(--text-muted)]">{subtitle}</p>
       </div>
       {children}
     </section>
@@ -189,31 +189,31 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-6">
-      <section className="overflow-hidden rounded-[36px] border border-slate-900/5 bg-[#0f172a] px-6 py-7 text-white shadow-[0_28px_100px_-36px_rgba(2,12,27,0.85)] lg:px-8">
+      <section className="overflow-hidden rounded-[36px] border border-[var(--border-main)] bg-[var(--bg-hero)] px-6 py-7 text-[var(--hero-fg)] shadow-[0_28px_100px_-36px_rgba(var(--bg-hero-rgb),0.85)] lg:px-8">
         <div className="grid gap-6 lg:grid-cols-[1.5fr_0.9fr]">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.34em] text-cyan-300/80">
+            <p className="text-xs font-semibold uppercase tracking-[0.34em] text-[var(--primary)] brightness-125">
               Modern command center
             </p>
-            <h2 className="mt-3 max-w-2xl text-3xl font-semibold tracking-tight lg:text-4xl">
+            <h2 className="mt-3 max-w-2xl text-3xl font-semibold tracking-tight lg:text-4xl text-[var(--hero-fg)]">
               {user?.role === "employee"
                 ? "Your salary profile and daily ERP access"
                 : "Operations, revenue, and payroll in one sharp dashboard"}
             </h2>
-            <p className="mt-3 max-w-2xl text-sm text-slate-300">
+            <p className="mt-3 max-w-2xl text-sm opacity-80">
               {user?.role === "employee"
                 ? "Your account is linked to the employee system. Salary is assigned automatically from your registered position."
                 : "This layout highlights customers, orders, products, inventory pressure, and the employee salary system from one screen."}
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
               <div className="rounded-2xl border border-white/10 bg-white/10 px-4 py-3 backdrop-blur">
-                <p className="text-xs uppercase tracking-[0.18em] text-cyan-200/70">Orders value</p>
+                <p className="text-xs uppercase tracking-[0.18em] opacity-70">Orders value</p>
                 <p className="mt-2 text-2xl font-semibold">
                   {stats.loading ? "..." : formatMoney(stats.revenue)}
                 </p>
               </div>
               <div className="rounded-2xl border border-white/10 bg-white/10 px-4 py-3 backdrop-blur">
-                <p className="text-xs uppercase tracking-[0.18em] text-cyan-200/70">Payroll</p>
+                <p className="text-xs uppercase tracking-[0.18em] opacity-70">Payroll</p>
                 <p className="mt-2 text-2xl font-semibold">
                   {user?.role === "employee"
                     ? stats.loading
@@ -225,7 +225,7 @@ export default function DashboardPage() {
                 </p>
               </div>
               <div className="rounded-2xl border border-white/10 bg-white/10 px-4 py-3 backdrop-blur">
-                <p className="text-xs uppercase tracking-[0.18em] text-cyan-200/70">Inventory alerts</p>
+                <p className="text-xs uppercase tracking-[0.18em] opacity-70">Inventory alerts</p>
                 <p className="mt-2 text-2xl font-semibold">{stats.loading ? "..." : stats.lowStock}</p>
               </div>
             </div>
@@ -233,27 +233,27 @@ export default function DashboardPage() {
 
           <div className="rounded-[28px] border border-white/10 bg-white/10 p-5 backdrop-blur">
             <div className="flex items-center justify-between">
-              <p className="text-sm font-medium text-slate-200">
+              <p className="text-sm font-medium opacity-90">
                 {user?.role === "employee" ? "Employee profile" : "Financial pulse"}
               </p>
-              <Icon icon="solar:pulse-2-bold-duotone" className="h-6 w-6 text-cyan-300" />
+              <Icon icon="solar:pulse-2-bold-duotone" className="h-6 w-6 text-[var(--primary)] brightness-125" />
             </div>
             {user?.role === "employee" ? (
               <div className="mt-5 space-y-4">
-                <div className="rounded-2xl bg-slate-950/25 p-4">
-                  <p className="text-xs uppercase tracking-[0.18em] text-slate-400">Position</p>
+                <div className="rounded-2xl bg-black/10 p-4">
+                  <p className="text-xs uppercase tracking-[0.18em] text-[var(--text-muted)] opacity-70">Position</p>
                   <p className="mt-2 text-xl font-semibold text-white">
                     {stats.currentEmployee?.position ?? "Pending setup"}
                   </p>
                 </div>
-                <div className="rounded-2xl bg-slate-950/25 p-4">
-                  <p className="text-xs uppercase tracking-[0.18em] text-slate-400">Monthly salary</p>
+                <div className="rounded-2xl bg-black/10 p-4">
+                  <p className="text-xs uppercase tracking-[0.18em] text-[var(--text-muted)] opacity-70">Monthly salary</p>
                   <p className="mt-2 text-xl font-semibold text-white">
                     {stats.loading ? "..." : formatMoney(employeeSalary)}
                   </p>
                 </div>
-                <div className="rounded-2xl bg-slate-950/25 p-4">
-                  <p className="text-xs uppercase tracking-[0.18em] text-slate-400">Hire date</p>
+                <div className="rounded-2xl bg-black/10 p-4">
+                  <p className="text-xs uppercase tracking-[0.18em] text-[var(--text-muted)] opacity-70">Hire date</p>
                   <p className="mt-2 text-lg font-semibold text-white">
                     {stats.currentEmployee?.hire_date
                       ? new Date(stats.currentEmployee.hire_date).toLocaleDateString()
@@ -263,16 +263,16 @@ export default function DashboardPage() {
               </div>
             ) : (
               <div className="mt-5 space-y-4">
-                <div className="flex items-center justify-between rounded-2xl bg-emerald-400/10 px-4 py-3">
-                  <span className="text-sm text-emerald-100">Income</span>
+                <div className="flex items-center justify-between rounded-2xl bg-emerald-500/20 px-4 py-3">
+                  <span className="text-sm opacity-90">Income</span>
                   <span className="font-semibold text-white">{stats.loading ? "..." : formatMoney(stats.income)}</span>
                 </div>
-                <div className="flex items-center justify-between rounded-2xl bg-amber-400/10 px-4 py-3">
-                  <span className="text-sm text-amber-100">Expense</span>
+                <div className="flex items-center justify-between rounded-2xl bg-amber-500/20 px-4 py-3">
+                  <span className="text-sm opacity-90">Expense</span>
                   <span className="font-semibold text-white">{stats.loading ? "..." : formatMoney(stats.expense)}</span>
                 </div>
-                <div className="flex items-center justify-between rounded-2xl bg-cyan-400/10 px-4 py-3">
-                  <span className="text-sm text-cyan-100">Net cash</span>
+                <div className="flex items-center justify-between rounded-2xl bg-[var(--primary)]/20 px-4 py-3">
+                  <span className="text-sm opacity-90">Net cash</span>
                   <span className="font-semibold text-white">{stats.loading ? "..." : formatMoney(net)}</span>
                 </div>
               </div>
@@ -334,10 +334,10 @@ export default function DashboardPage() {
                     : Math.max(...stats.orderStatus.map((item) => item.value), 1);
 
                 return (
-                  <div key={label} className="rounded-2xl bg-slate-50 px-4 py-4">
+                  <div key={label} className="rounded-2xl bg-[var(--bg-card)] px-4 py-4">
                     <div className="flex items-center justify-between text-sm">
-                      <span className="font-medium text-slate-700">{label}</span>
-                      <span className="text-slate-500">
+                      <span className="font-medium text-[var(--text-main)] opacity-80">{label}</span>
+                      <span className="text-[var(--text-muted)]">
                         {user?.role === "employee" ? formatMoney(current) : current}
                       </span>
                     </div>
@@ -352,7 +352,7 @@ export default function DashboardPage() {
               }
             )}
             {!stats.loading && user?.role !== "employee" && stats.orderStatus.length === 0 ? (
-              <p className="text-sm text-slate-500">No orders are available yet.</p>
+              <p className="text-sm text-[var(--text-muted)]">No orders are available yet.</p>
             ) : null}
           </div>
         </Panel>
@@ -367,17 +367,17 @@ export default function DashboardPage() {
         >
           {user?.role === "employee" ? (
             <div className="space-y-4">
-              <div className="rounded-2xl bg-slate-50 p-4">
-                <p className="text-xs uppercase tracking-[0.18em] text-slate-400">Name</p>
-                <p className="mt-2 text-lg font-semibold text-slate-950">{user?.name}</p>
+              <div className="rounded-2xl bg-[var(--bg-card)] p-4">
+                <p className="text-xs uppercase tracking-[0.18em] text-[var(--text-muted)]">Name</p>
+                <p className="mt-2 text-lg font-semibold text-[var(--text-main)]">{user?.name}</p>
               </div>
-              <div className="rounded-2xl bg-slate-50 p-4">
-                <p className="text-xs uppercase tracking-[0.18em] text-slate-400">Email</p>
-                <p className="mt-2 text-lg font-semibold text-slate-950">{user?.email}</p>
+              <div className="rounded-2xl bg-[var(--bg-card)] p-4">
+                <p className="text-xs uppercase tracking-[0.18em] text-[var(--text-muted)]">Email</p>
+                <p className="mt-2 text-lg font-semibold text-[var(--text-main)]">{user?.email}</p>
               </div>
-              <div className="rounded-2xl bg-slate-50 p-4">
-                <p className="text-xs uppercase tracking-[0.18em] text-slate-400">Automation</p>
-                <p className="mt-2 text-sm text-slate-600">
+              <div className="rounded-2xl bg-[var(--bg-card)] p-4">
+                <p className="text-xs uppercase tracking-[0.18em] text-[var(--text-muted)]">Automation</p>
+                <p className="mt-2 text-sm text-[var(--text-main)] opacity-80">
                   Change the position from admin employee management and the salary updates automatically.
                 </p>
               </div>
@@ -385,18 +385,18 @@ export default function DashboardPage() {
           ) : (
             <div className="space-y-3">
               {stats.employeesByPosition.map((item) => (
-                <div key={item.label} className="flex items-center justify-between rounded-2xl bg-slate-50 px-4 py-4">
+                <div key={item.label} className="flex items-center justify-between rounded-2xl bg-[var(--bg-card)] px-4 py-4">
                   <div className="flex items-center gap-3">
                     <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-sky-100 text-sky-700">
                       <Icon icon="solar:case-round-bold-duotone" className="h-6 w-6" />
                     </div>
-                    <span className="font-medium text-slate-700">{item.label}</span>
+                    <span className="font-medium text-[var(--text-main)] opacity-80">{item.label}</span>
                   </div>
-                  <span className="text-lg font-semibold text-slate-950">{item.value}</span>
+                  <span className="text-lg font-semibold text-[var(--text-main)]">{item.value}</span>
                 </div>
               ))}
               {!stats.loading && stats.employeesByPosition.length === 0 ? (
-                <p className="text-sm text-slate-500">No employee records are available yet.</p>
+                <p className="text-sm text-[var(--text-muted)]">No employee records are available yet.</p>
               ) : null}
             </div>
           )}
@@ -412,24 +412,24 @@ export default function DashboardPage() {
             {stats.recentTransactions.map((transaction) => (
               <div
                 key={transaction.id}
-                className="flex items-center justify-between rounded-2xl border border-slate-200/80 bg-slate-50/70 px-4 py-4"
+                className="flex items-center justify-between rounded-2xl border border-[var(--border-main)] bg-[var(--bg-card)]/70 px-4 py-4"
               >
                 <div>
-                  <p className="font-medium text-slate-900">{transaction.description || "Manual transaction"}</p>
-                  <p className="mt-1 text-sm text-slate-500">
+                  <p className="font-medium text-[var(--text-main)]">{transaction.description || "Manual transaction"}</p>
+                  <p className="mt-1 text-sm text-[var(--text-muted)]">
                     {new Date(transaction.created_at ?? "").toLocaleDateString()}
                   </p>
                 </div>
                 <div className="text-right">
-                  <p className="text-sm uppercase tracking-[0.18em] text-slate-400">{transaction.type}</p>
-                  <p className="mt-1 text-lg font-semibold text-slate-950">
+                  <p className="text-sm uppercase tracking-[0.18em] text-[var(--text-muted)]">{transaction.type}</p>
+                  <p className="mt-1 text-lg font-semibold text-[var(--text-main)]">
                     {formatMoney(parseMoney(transaction.amount))}
                   </p>
                 </div>
               </div>
             ))}
             {!stats.loading && stats.recentTransactions.length === 0 ? (
-              <p className="text-sm text-slate-500">No transactions have been recorded yet.</p>
+              <p className="text-sm text-[var(--text-muted)]">No transactions have been recorded yet.</p>
             ) : null}
           </div>
         </Panel>

@@ -137,6 +137,21 @@ func (app *App) HandleCreateOrder(c echo.Context) error {
 		return serverError(c, err)
 	}
 
+	// If created as completed, record income
+	if status == "completed" {
+		description := fmt.Sprintf("Income from completed order #%d", created.ID)
+		_, err = app.DB.Exec(
+			`INSERT INTO transactions (type, amount, description, order_id)
+			 VALUES ('income', $1, $2, $3)`,
+			total, description, created.ID,
+		)
+		if err != nil {
+			// Non-blocking but log it or handle it. For simplicity, we just log or ignore here
+			// as the order itself was successfully committed.
+			fmt.Printf("failed to record transaction for order %d: %v\n", created.ID, err)
+		}
+	}
+
 	created.Items = computedItems
 	return c.JSON(http.StatusCreated, created)
 }

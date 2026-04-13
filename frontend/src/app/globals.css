@@ -3,29 +3,121 @@
 @tailwind utilities;
 
 :root {
-  --background: #eef5ff;
-  --foreground: #0f172a;
+  /* Default (Sky/Ocean) Light */
+  --bg-app: #f8fbff;
+  --bg-sidebar: #0f172a;
+  --bg-card: rgba(255, 255, 255, 0.8);
+  --bg-header: rgba(255, 255, 255, 0.7);
+  --text-main: #0f172a;
+  --text-muted: #475569; /* Slate 600 - better contrast */
+  --text-sidebar: #f1f5f9;
+  --text-sidebar-muted: #94a3b8;
+  --border-main: rgba(203, 213, 225, 0.8);
+ /* Slate 300 - better definition */
+  --primary: #0ea5e9;
+  --primary-rgb: 14, 165, 233;
+  --primary-fg: #ffffff;
+  --accent: #22d3ee;
+  --accent-rgb: 34, 211, 238;
+  --sidebar-border: rgba(255, 255, 255, 0.1);
+  --bg-hero: #0f172a;
+  --bg-hero-rgb: 15, 23, 42;
+  --hero-fg: #ffffff;
 }
 
-html {
-  height: 100%;
+.dark {
+  --bg-app: #020617;
+  --bg-sidebar: #0f172a;
+  --bg-card: rgba(15, 23, 42, 0.8);
+  --bg-header: rgba(2, 6, 23, 0.7);
+  --text-main: #f1f5f9;
+  --text-muted: #94a3b8; /* Slate 400 */
+  --border-main: rgba(51, 65, 85, 0.7); /* Slate 700 */
+  --primary: #38bdf8;
+  --primary-rgb: 56, 189, 248;
+  --accent: #22d3ee;
+  --accent-rgb: 34, 211, 238;
+  --bg-hero: #0f172a;
+  --bg-hero-rgb: 15, 23, 42;
+  --hero-fg: #ffffff;
 }
 
-html,
-body {
-  max-width: 100vw;
-  overflow-x: hidden;
+/* OneDark Theme */
+.theme-onedark {
+  --bg-app: #fafafa;
+  --bg-sidebar: #282c34;
+  --bg-card: rgba(255, 255, 255, 0.9);
+  --bg-header: rgba(250, 250, 250, 0.8);
+  --text-main: #282c34;
+  --text-muted: #535353; /* Darker grey */
+  --text-sidebar: #abb2bf;
+  --border-main: #d8d8d8;
+  --primary: #61afef;
+  --primary-rgb: 97, 175, 239;
+  --accent: #c678dd;
+  --accent-rgb: 198, 120, 221;
+  --bg-hero: #282c34;
+  --bg-hero-rgb: 40, 44, 52;
+  --hero-fg: #abb2bf;
 }
 
-body {
-  min-height: 100%;
-  display: flex;
-  flex-direction: column;
-  color: var(--foreground);
-  background: var(--background);
-  font-family: "Space Grotesk", "Segoe UI", sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+.theme-onedark.dark {
+  --bg-app: #21252b;
+  --bg-sidebar: #282c34;
+  --bg-card: rgba(40, 44, 52, 0.8);
+  --bg-header: rgba(33, 37, 43, 0.7);
+  --text-main: #abb2bf;
+  --text-muted: #9da5b4; /* Much lighter for OneDark Dark */
+  --border-main: #3e4451;
+  --primary: #61afef;
+  --primary-rgb: 97, 175, 239;
+  --accent: #c678dd;
+  --accent-rgb: 198, 120, 221;
+  --bg-hero: #282c34;
+  --bg-hero-rgb: 40, 44, 52;
+  --hero-fg: #abb2bf;
+}
+
+/* Gruvbox Theme */
+.theme-gruvbox {
+  --bg-app: #fbf1c7;
+  --bg-sidebar: #3c3836;
+  --bg-card: rgba(251, 241, 199, 0.9);
+  --bg-header: rgba(251, 241, 199, 0.8);
+  --text-main: #282828;
+  --text-muted: #504945; /* Much darker for Gruvbox Light */
+  --text-sidebar: #ebdbb2;
+  --border-main: #d5c4a1;
+  --primary: #d79921;
+  --primary-rgb: 215, 153, 33;
+  --accent: #b8bb26;
+  --accent-rgb: 184, 187, 38;
+  --bg-hero: #3c3836;
+  --bg-hero-rgb: 60, 56, 54;
+  --hero-fg: #ebdbb2;
+}
+
+.theme-gruvbox.dark {
+  --bg-app: #1d2021;
+  --bg-sidebar: #282828;
+  --bg-card: rgba(40, 40, 40, 0.8);
+  --bg-header: rgba(29, 32, 33, 0.7);
+  --text-main: #ebdbb2;
+  --text-muted: #bdae93; /* Lighter for Gruvbox Dark */
+  --border-main: #3c3836;
+  --primary: #fabd2f;
+  --primary-rgb: 250, 189, 47;
+  --accent: #b8bb26;
+  --accent-rgb: 184, 187, 38;
+  --bg-hero: #3c3836;
+  --bg-hero-rgb: 60, 56, 54;
+  --hero-fg: #ebdbb2;
+}
+
+html, body {
+  background: var(--bg-app);
+  color: var(--text-main);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 * {

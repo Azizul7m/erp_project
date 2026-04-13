@@ -5,29 +5,30 @@ import { useAuth } from "@/components/AuthProvider";
 import { RoleGuard } from "@/components/RoleGuard";
 import toast from "react-hot-toast";
 import { apiFetch, unwrapList } from "@/lib/api";
-import type { Customer } from "@/types/models";
+import { POSITION_OPTIONS, formatMoney, getSalaryForPosition } from "@/lib/employees";
+import type { Employee } from "@/types/models";
 
-type CustomerForm = {
+type EmployeeForm = {
   id?: number;
   name: string;
-  phone: string;
   email: string;
-  address: string;
+  phone: string;
+  position: string;
 };
 
-const emptyForm: CustomerForm = {
+const emptyForm: EmployeeForm = {
   name: "",
-  phone: "",
   email: "",
-  address: "",
+  phone: "",
+  position: POSITION_OPTIONS[0],
 };
 
-export default function CustomersPage() {
+export default function EmployeesPage() {
   const { user, loading: authLoading } = useAuth();
-  const [rows, setRows] = useState<Customer[]>([]);
+  const [rows, setRows] = useState<Employee[]>([]);
   const [loading, setLoading] = useState(true);
-  const [editing, setEditing] = useState<Customer | null>(null);
-  const [form, setForm] = useState<CustomerForm>(emptyForm);
+  const [editing, setEditing] = useState<Employee | null>(null);
+  const [form, setForm] = useState<EmployeeForm>(emptyForm);
   const [query, setQuery] = useState("");
 
   const load = useCallback(async () => {
@@ -38,11 +39,11 @@ export default function CustomersPage() {
         params.set("q", query.trim());
       }
       const json = await apiFetch<unknown>(
-        `/api/customers${params.size ? `?${params.toString()}` : ""}`
+        `/api/employees${params.size ? `?${params.toString()}` : ""}`
       );
-      setRows(unwrapList<Customer>(json));
+      setRows(unwrapList<Employee>(json));
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Failed to load customers");
+      toast.error(e instanceof Error ? e.message : "Failed to load employees");
       setRows([]);
     } finally {
       setLoading(false);
@@ -64,21 +65,21 @@ export default function CustomersPage() {
     setForm({ ...emptyForm });
   }
 
-  function openEdit(row: Customer) {
+  function openEdit(row: Employee) {
     setEditing(row);
     setForm({
       id: row.id,
       name: row.name ?? "",
-      phone: row.phone ?? "",
       email: row.email ?? "",
-      address: row.address ?? "",
+      phone: row.phone ?? "",
+      position: row.position ?? POSITION_OPTIONS[0],
     });
   }
 
   async function save(e: React.FormEvent) {
     e.preventDefault();
-    if (!form.name.trim()) {
-      toast.error("Name is required");
+    if (!form.name.trim() || !form.email.trim() || !form.position.trim()) {
+      toast.error("Name, email, and position are required");
       return;
     }
     if (form.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
@@ -88,24 +89,24 @@ export default function CustomersPage() {
 
     const payload = {
       name: form.name.trim(),
+      email: form.email.trim(),
       phone: form.phone || null,
-      email: form.email || null,
-      address: form.address || null,
+      position: form.position.trim(),
     };
 
     try {
       if (form.id) {
-        await apiFetch(`/api/customers/${form.id}`, {
+        await apiFetch(`/api/employees/${form.id}`, {
           method: "PUT",
           body: JSON.stringify(payload),
         });
-        toast.success("Customer updated");
+        toast.success("Employee updated");
       } else {
-        await apiFetch("/api/customers", {
+        await apiFetch("/api/employees", {
           method: "POST",
           body: JSON.stringify(payload),
         });
-        toast.success("Customer created");
+        toast.success("Employee created");
       }
       setEditing(null);
       setForm({ ...emptyForm });
@@ -116,9 +117,9 @@ export default function CustomersPage() {
   }
 
   async function removeRow(id: number) {
-    if (!confirm("Delete this customer?")) return;
+    if (!confirm("Delete this employee?")) return;
     try {
-      await apiFetch(`/api/customers/${id}`, { method: "DELETE" });
+      await apiFetch(`/api/employees/${id}`, { method: "DELETE" });
       toast.success("Deleted");
       await load();
     } catch (err) {
@@ -132,15 +133,15 @@ export default function CustomersPage() {
       {authLoading ? <p className="mb-4 text-[var(--text-muted)]">Loading…</p> : null}
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h2 className="text-xl font-semibold text-[var(--text-main)]">Customers</h2>
-          <p className="mt-1 text-sm text-[var(--text-muted)]">Create, edit, and remove customers.</p>
+          <h2 className="text-xl font-semibold text-[var(--text-main)]">Employees</h2>
+          <p className="mt-1 text-sm text-[var(--text-muted)]">Manage your workforce, positions, and salaries.</p>
         </div>
         <button
           type="button"
           onClick={openCreate}
-          className="rounded-lg bg-[var(--primary)] px-4 py-2 text-sm font-semibold text-white hover:opacity-90 transition-opacity"
+          className="rounded-lg bg-[var(--primary)] px-4 py-2 text-sm font-semibold text-white hover:opacity-90"
         >
-          New customer
+          New employee
         </button>
       </div>
 
@@ -151,16 +152,16 @@ export default function CustomersPage() {
               type="search"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search by name, phone, email, or address"
-              className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-app)] px-3 py-2 text-sm text-[var(--text-main)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]/20"
+              placeholder="Search by name, email, or position"
+              className="w-full rounded-lg border border-[var(--border-main)] px-3 py-2 text-sm"
             />
           </div>
           <table className="w-full text-left text-sm">
-            <thead className="bg-[var(--bg-header)] text-xs font-semibold uppercase text-[var(--text-muted)]">
+            <thead className="bg-[var(--bg-card)] text-xs font-semibold uppercase text-[var(--text-muted)]">
               <tr>
                 <th className="px-4 py-3">Name</th>
-                <th className="px-4 py-3">Phone</th>
-                <th className="px-4 py-3">Email</th>
+                <th className="px-4 py-3">Position</th>
+                <th className="px-4 py-3">Salary</th>
                 <th className="px-4 py-3 text-right">Actions</th>
               </tr>
             </thead>
@@ -174,20 +175,23 @@ export default function CustomersPage() {
               ) : rows.length === 0 ? (
                 <tr>
                   <td colSpan={4} className="px-4 py-8 text-center text-[var(--text-muted)]">
-                    {query.trim() ? "No customers match your search." : "No customers yet."}
+                    {query.trim() ? "No employees match your search." : "No employees yet."}
                   </td>
                 </tr>
               ) : (
                 rows.map((r) => (
-                  <tr key={r.id} className="hover:bg-[var(--bg-app)]/50 transition-colors">
-                    <td className="px-4 py-3 font-medium text-[var(--text-main)]">{r.name}</td>
-                    <td className="px-4 py-3 text-[var(--text-muted)]">{r.phone ?? "—"}</td>
-                    <td className="px-4 py-3 text-[var(--text-muted)]">{r.email ?? "—"}</td>
+                  <tr key={r.id} className="hover:bg-[var(--bg-card)]/80">
+                    <td className="px-4 py-3">
+                      <div className="font-medium text-[var(--text-main)]">{r.name}</div>
+                      <div className="text-xs text-[var(--text-muted)]">{r.email}</div>
+                    </td>
+                    <td className="px-4 py-3 text-[var(--text-muted)]">{r.position}</td>
+                    <td className="px-4 py-3 font-mono text-[var(--text-muted)]">${formatMoney(Number(r.salary))}</td>
                     <td className="px-4 py-3 text-right">
                       <button
                         type="button"
                         onClick={() => openEdit(r)}
-                        className="text-[var(--primary)] font-medium underline-offset-2 hover:underline"
+                        className="text-[var(--text-main)] opacity-80 underline-offset-2 hover:underline"
                       >
                         Edit
                       </button>
@@ -195,7 +199,7 @@ export default function CustomersPage() {
                       <button
                         type="button"
                         onClick={() => removeRow(r.id)}
-                        className="text-red-500 font-medium underline-offset-2 hover:underline"
+                        className="text-red-600 underline-offset-2 hover:underline"
                       >
                         Delete
                       </button>
@@ -207,9 +211,9 @@ export default function CustomersPage() {
           </table>
         </div>
 
-        <div className="rounded-xl border border-[var(--border-main)] bg-[var(--bg-card)] p-5 shadow-sm h-fit">
+        <div className="rounded-xl border border-[var(--border-main)] bg-[var(--bg-card)] p-5 shadow-sm">
           <h3 className="font-semibold text-[var(--text-main)]">
-            {form.id ? "Edit customer" : "New customer"}
+            {form.id ? "Edit employee" : "New employee"}
           </h3>
           <form onSubmit={save} className="mt-4 flex flex-col gap-3">
             <div>
@@ -217,39 +221,53 @@ export default function CustomersPage() {
               <input
                 value={form.name}
                 onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
-                className="mt-1 w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-app)] px-3 py-2 text-sm text-[var(--text-main)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]/20"
+                className="mt-1 w-full rounded-lg border border-[var(--border-main)] px-3 py-2 text-sm"
+              />
+            </div>
+            <div>
+              <label className="text-xs font-medium text-[var(--text-muted)]">Email *</label>
+              <input
+                type="email"
+                value={form.email}
+                onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
+                className="mt-1 w-full rounded-lg border border-[var(--border-main)] px-3 py-2 text-sm"
               />
             </div>
             <div>
               <label className="text-xs font-medium text-[var(--text-muted)]">Phone</label>
               <input
-                value={form.phone ?? ""}
+                value={form.phone}
                 onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))}
-                className="mt-1 w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-app)] px-3 py-2 text-sm text-[var(--text-main)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]/20"
+                className="mt-1 w-full rounded-lg border border-[var(--border-main)] px-3 py-2 text-sm"
               />
             </div>
             <div>
-              <label className="text-xs font-medium text-[var(--text-muted)]">Email</label>
-              <input
-                type="email"
-                value={form.email ?? ""}
-                onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
-                className="mt-1 w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-app)] px-3 py-2 text-sm text-[var(--text-main)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]/20"
-              />
+              <label className="text-xs font-medium text-[var(--text-muted)]">Position *</label>
+              <select
+                value={form.position}
+                onChange={(e) => setForm((f) => ({ ...f, position: e.target.value }))}
+                className="mt-1 w-full rounded-lg border border-[var(--border-main)] px-3 py-2 text-sm"
+              >
+                {POSITION_OPTIONS.map((option) => (
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
+                ))}
+              </select>
             </div>
-            <div>
-              <label className="text-xs font-medium text-[var(--text-muted)]">Address</label>
-              <textarea
-                value={form.address ?? ""}
-                onChange={(e) => setForm((f) => ({ ...f, address: e.target.value }))}
-                rows={3}
-                className="mt-1 w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-app)] px-3 py-2 text-sm text-[var(--text-main)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]/20"
-              />
+            <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3">
+              <label className="text-xs font-medium text-emerald-700">Auto salary</label>
+              <p className="mt-1 text-lg font-semibold text-emerald-900">
+                ${formatMoney(getSalaryForPosition(form.position))}
+              </p>
+              <p className="mt-1 text-xs text-emerald-700">
+                Salary is assigned automatically from the selected position.
+              </p>
             </div>
             <div className="flex gap-2 pt-2">
               <button
                 type="submit"
-                className="flex-1 rounded-lg bg-[var(--primary)] px-4 py-2 text-sm font-semibold text-white hover:opacity-90 transition-opacity"
+                className="rounded-lg bg-[var(--primary)] px-4 py-2 text-sm font-semibold text-white hover:opacity-90"
               >
                 Save
               </button>
@@ -260,7 +278,7 @@ export default function CustomersPage() {
                     setEditing(null);
                     setForm({ ...emptyForm });
                   }}
-                  className="flex-1 rounded-lg border border-[var(--border-main)] px-4 py-2 text-sm font-medium text-[var(--text-muted)] hover:bg-[var(--bg-app)] transition-colors"
+                  className="rounded-lg border border-[var(--border-main)] px-4 py-2 text-sm font-medium text-[var(--text-main)] opacity-80"
                 >
                   Cancel
                 </button>
