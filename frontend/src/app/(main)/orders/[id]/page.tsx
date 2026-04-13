@@ -90,7 +90,7 @@ export default function OrderDetailPage() {
             <button
               onClick={() => updateStatus("cancelled")}
               disabled={updating}
-              className="rounded-lg border border-red-200 bg-red-50 px-4 py-2 text-sm font-semibold text-red-700 hover:bg-red-100 disabled:opacity-50"
+              className="rounded-lg border border-red-500/20 bg-red-500/10 px-4 py-2 text-sm font-semibold text-red-700 hover:bg-red-100 disabled:opacity-50"
             >
               Cancel Order
             </button>
@@ -106,15 +106,15 @@ export default function OrderDetailPage() {
       </div>
 
       <dl className="mt-6 grid max-w-md gap-2 text-sm">
-        <div className="flex justify-between gap-4 border-b border-slate-100 py-2">
+        <div className="flex justify-between gap-4 border-b border-[var(--border-main)] py-2">
           <dt className="text-[var(--text-muted)]">Customer ID</dt>
           <dd className="font-medium text-[var(--text-main)]">{order.customer_id ?? "—"}</dd>
         </div>
-        <div className="flex justify-between gap-4 border-b border-slate-100 py-2">
+        <div className="flex justify-between gap-4 border-b border-[var(--border-main)] py-2">
           <dt className="text-[var(--text-muted)]">Total</dt>
           <dd className="font-medium text-[var(--text-main)]">{String(order.total_amount)}</dd>
         </div>
-        <div className="flex justify-between gap-4 border-b border-slate-100 py-2">
+        <div className="flex justify-between gap-4 border-b border-[var(--border-main)] py-2">
           <dt className="text-[var(--text-muted)]">Status</dt>
           <dd className="font-medium text-[var(--text-main)]">{order.status ?? "—"}</dd>
         </div>

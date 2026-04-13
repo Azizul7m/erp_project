@@ -123,7 +123,7 @@ export default function TransactionsPage() {
                     <td className="px-4 py-3 text-[var(--text-muted)]">{r.description ?? "—"}</td>
                     <td className="px-4 py-3 text-[var(--text-muted)]">
                       {r.order_id ? (
-                        <Link href={`/orders/${r.order_id}`} className="text-slate-800 underline hover:text-[var(--text-muted)]">
+                        <Link href={`/orders/${r.order_id}`} className="text-[var(--text-main)] underline hover:text-[var(--text-muted)]">
                           #{r.order_id}
                         </Link>
                       ) : "—"}

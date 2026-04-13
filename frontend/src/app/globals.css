@@ -20,6 +20,9 @@
   --accent: #22d3ee;
   --accent-rgb: 34, 211, 238;
   --sidebar-border: rgba(255, 255, 255, 0.1);
+  --bg-hero: #0f172a;
+  --bg-hero-rgb: 15, 23, 42;
+  --hero-fg: #ffffff;
 }
 
 .dark {
@@ -34,6 +37,9 @@
   --primary-rgb: 56, 189, 248;
   --accent: #22d3ee;
   --accent-rgb: 34, 211, 238;
+  --bg-hero: #0f172a;
+  --bg-hero-rgb: 15, 23, 42;
+  --hero-fg: #ffffff;
 }
 
 /* OneDark Theme */
@@ -50,6 +56,9 @@
   --primary-rgb: 97, 175, 239;
   --accent: #c678dd;
   --accent-rgb: 198, 120, 221;
+  --bg-hero: #282c34;
+  --bg-hero-rgb: 40, 44, 52;
+  --hero-fg: #abb2bf;
 }
 
 .theme-onedark.dark {
@@ -64,6 +73,9 @@
   --primary-rgb: 97, 175, 239;
   --accent: #c678dd;
   --accent-rgb: 198, 120, 221;
+  --bg-hero: #282c34;
+  --bg-hero-rgb: 40, 44, 52;
+  --hero-fg: #abb2bf;
 }
 
 /* Gruvbox Theme */
@@ -80,6 +92,9 @@
   --primary-rgb: 215, 153, 33;
   --accent: #b8bb26;
   --accent-rgb: 184, 187, 38;
+  --bg-hero: #3c3836;
+  --bg-hero-rgb: 60, 56, 54;
+  --hero-fg: #ebdbb2;
 }
 
 .theme-gruvbox.dark {
@@ -94,6 +109,9 @@
   --primary-rgb: 250, 189, 47;
   --accent: #b8bb26;
   --accent-rgb: 184, 187, 38;
+  --bg-hero: #3c3836;
+  --bg-hero-rgb: 60, 56, 54;
+  --hero-fg: #ebdbb2;
 }
 
 html, body {

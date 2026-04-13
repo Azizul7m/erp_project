@@ -166,7 +166,7 @@ export default function OrdersPage() {
               ) : (
                 rows.map((r) => (
                   <tr key={r.id} className="hover:bg-[var(--bg-card)]/80">
-                    <td className="px-4 py-3 font-mono text-slate-800">{r.id}</td>
+                    <td className="px-4 py-3 font-mono text-[var(--text-main)]">{r.id}</td>
                     <td className="px-4 py-3 text-[var(--text-muted)]">
                       {r.customer_id ? customerNameById.get(r.customer_id) ?? `#${r.customer_id}` : "—"}
                     </td>
@@ -178,7 +178,7 @@ export default function OrdersPage() {
                     <td className="px-4 py-3 text-right">
                       <Link
                         href={`/orders/${r.id}`}
-                        className="text-slate-800 underline-offset-2 hover:underline"
+                        className="text-[var(--text-main)] underline-offset-2 hover:underline"
                       >
                         View
                       </Link>

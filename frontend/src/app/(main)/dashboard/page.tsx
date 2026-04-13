@@ -189,31 +189,31 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-6">
-      <section className="overflow-hidden rounded-[36px] border border-slate-900/5 bg-[#0f172a] px-6 py-7 text-white shadow-[0_28px_100px_-36px_rgba(2,12,27,0.85)] lg:px-8">
+      <section className="overflow-hidden rounded-[36px] border border-[var(--border-main)] bg-[var(--bg-hero)] px-6 py-7 text-[var(--hero-fg)] shadow-[0_28px_100px_-36px_rgba(var(--bg-hero-rgb),0.85)] lg:px-8">
         <div className="grid gap-6 lg:grid-cols-[1.5fr_0.9fr]">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.34em] text-cyan-300/80">
+            <p className="text-xs font-semibold uppercase tracking-[0.34em] text-[var(--primary)] brightness-125">
               Modern command center
             </p>
-            <h2 className="mt-3 max-w-2xl text-3xl font-semibold tracking-tight lg:text-4xl text-white">
+            <h2 className="mt-3 max-w-2xl text-3xl font-semibold tracking-tight lg:text-4xl text-[var(--hero-fg)]">
               {user?.role === "employee"
                 ? "Your salary profile and daily ERP access"
                 : "Operations, revenue, and payroll in one sharp dashboard"}
             </h2>
-            <p className="mt-3 max-w-2xl text-sm text-[var(--border-main)]">
+            <p className="mt-3 max-w-2xl text-sm opacity-80">
               {user?.role === "employee"
                 ? "Your account is linked to the employee system. Salary is assigned automatically from your registered position."
                 : "This layout highlights customers, orders, products, inventory pressure, and the employee salary system from one screen."}
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
-              <div className="rounded-2xl border border-white/10 bg-[var(--bg-card)]/10 px-4 py-3 backdrop-blur">
-                <p className="text-xs uppercase tracking-[0.18em] text-cyan-200/70">Orders value</p>
+              <div className="rounded-2xl border border-white/10 bg-white/10 px-4 py-3 backdrop-blur">
+                <p className="text-xs uppercase tracking-[0.18em] opacity-70">Orders value</p>
                 <p className="mt-2 text-2xl font-semibold">
                   {stats.loading ? "..." : formatMoney(stats.revenue)}
                 </p>
               </div>
-              <div className="rounded-2xl border border-white/10 bg-[var(--bg-card)]/10 px-4 py-3 backdrop-blur">
-                <p className="text-xs uppercase tracking-[0.18em] text-cyan-200/70">Payroll</p>
+              <div className="rounded-2xl border border-white/10 bg-white/10 px-4 py-3 backdrop-blur">
+                <p className="text-xs uppercase tracking-[0.18em] opacity-70">Payroll</p>
                 <p className="mt-2 text-2xl font-semibold">
                   {user?.role === "employee"
                     ? stats.loading
@@ -224,36 +224,36 @@ export default function DashboardPage() {
                       : formatMoney(stats.payroll)}
                 </p>
               </div>
-              <div className="rounded-2xl border border-white/10 bg-[var(--bg-card)]/10 px-4 py-3 backdrop-blur">
-                <p className="text-xs uppercase tracking-[0.18em] text-cyan-200/70">Inventory alerts</p>
+              <div className="rounded-2xl border border-white/10 bg-white/10 px-4 py-3 backdrop-blur">
+                <p className="text-xs uppercase tracking-[0.18em] opacity-70">Inventory alerts</p>
                 <p className="mt-2 text-2xl font-semibold">{stats.loading ? "..." : stats.lowStock}</p>
               </div>
             </div>
           </div>
 
-          <div className="rounded-[28px] border border-white/10 bg-[var(--bg-card)]/10 p-5 backdrop-blur">
+          <div className="rounded-[28px] border border-white/10 bg-white/10 p-5 backdrop-blur">
             <div className="flex items-center justify-between">
-              <p className="text-sm font-medium text-slate-200">
+              <p className="text-sm font-medium opacity-90">
                 {user?.role === "employee" ? "Employee profile" : "Financial pulse"}
               </p>
-              <Icon icon="solar:pulse-2-bold-duotone" className="h-6 w-6 text-cyan-300" />
+              <Icon icon="solar:pulse-2-bold-duotone" className="h-6 w-6 text-[var(--primary)] brightness-125" />
             </div>
             {user?.role === "employee" ? (
               <div className="mt-5 space-y-4">
-                <div className="rounded-2xl bg-slate-950/25 p-4">
-                  <p className="text-xs uppercase tracking-[0.18em] text-[var(--text-muted)]">Position</p>
+                <div className="rounded-2xl bg-black/10 p-4">
+                  <p className="text-xs uppercase tracking-[0.18em] text-[var(--text-muted)] opacity-70">Position</p>
                   <p className="mt-2 text-xl font-semibold text-white">
                     {stats.currentEmployee?.position ?? "Pending setup"}
                   </p>
                 </div>
-                <div className="rounded-2xl bg-slate-950/25 p-4">
-                  <p className="text-xs uppercase tracking-[0.18em] text-[var(--text-muted)]">Monthly salary</p>
+                <div className="rounded-2xl bg-black/10 p-4">
+                  <p className="text-xs uppercase tracking-[0.18em] text-[var(--text-muted)] opacity-70">Monthly salary</p>
                   <p className="mt-2 text-xl font-semibold text-white">
                     {stats.loading ? "..." : formatMoney(employeeSalary)}
                   </p>
                 </div>
-                <div className="rounded-2xl bg-slate-950/25 p-4">
-                  <p className="text-xs uppercase tracking-[0.18em] text-[var(--text-muted)]">Hire date</p>
+                <div className="rounded-2xl bg-black/10 p-4">
+                  <p className="text-xs uppercase tracking-[0.18em] text-[var(--text-muted)] opacity-70">Hire date</p>
                   <p className="mt-2 text-lg font-semibold text-white">
                     {stats.currentEmployee?.hire_date
                       ? new Date(stats.currentEmployee.hire_date).toLocaleDateString()
@@ -263,16 +263,16 @@ export default function DashboardPage() {
               </div>
             ) : (
               <div className="mt-5 space-y-4">
-                <div className="flex items-center justify-between rounded-2xl bg-emerald-400/10 px-4 py-3">
-                  <span className="text-sm text-emerald-100">Income</span>
+                <div className="flex items-center justify-between rounded-2xl bg-emerald-500/20 px-4 py-3">
+                  <span className="text-sm opacity-90">Income</span>
                   <span className="font-semibold text-white">{stats.loading ? "..." : formatMoney(stats.income)}</span>
                 </div>
-                <div className="flex items-center justify-between rounded-2xl bg-amber-400/10 px-4 py-3">
-                  <span className="text-sm text-amber-100">Expense</span>
+                <div className="flex items-center justify-between rounded-2xl bg-amber-500/20 px-4 py-3">
+                  <span className="text-sm opacity-90">Expense</span>
                   <span className="font-semibold text-white">{stats.loading ? "..." : formatMoney(stats.expense)}</span>
                 </div>
-                <div className="flex items-center justify-between rounded-2xl bg-cyan-400/10 px-4 py-3">
-                  <span className="text-sm text-cyan-100">Net cash</span>
+                <div className="flex items-center justify-between rounded-2xl bg-[var(--primary)]/20 px-4 py-3">
+                  <span className="text-sm opacity-90">Net cash</span>
                   <span className="font-semibold text-white">{stats.loading ? "..." : formatMoney(net)}</span>
                 </div>
               </div>
