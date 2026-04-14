@@ -74,7 +74,7 @@ export default function LoginPage() {
               autoComplete="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-slate-900 dark:text-white outline-none ring-slate-400 focus:ring-2"
+              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-slate-900 outline-none ring-slate-400 focus:ring-2"
             />
           </div>
           <div>
@@ -89,6 +89,14 @@ export default function LoginPage() {
               onChange={(e) => setPassword(e.target.value)}
               className="mt-1 w-full rounded-lg border border-slate-300 dark:text-white px-3 py-2 text-slate-900 outline-none ring-slate-400 focus:ring-2"
             />
+          </div>
+          <div className="flex items-center justify-end">
+            <Link
+              href="/forgot-password"
+              className="text-xs font-medium text-slate-600 hover:text-slate-900"
+            >
+              Forgot password?
+            </Link>
           </div>
           <button
             type="submit"

@@ -64,28 +64,26 @@ export function Sidebar({ isOpen, onClose }: { isOpen?: boolean; onClose?: () =>
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(var(--primary-rgb),0.22),_transparent_34%),radial-gradient(circle_at_bottom,_rgba(var(--accent-rgb),0.18),_transparent_30%)]" />
         <div className="relative flex h-full flex-col p-5">
           <div className="flex items-center justify-between lg:block">
-            <div className="rounded-[28px] border border-white/10 bg-white/5 p-5 backdrop-blur">
-              <div className="flex items-center gap-3">
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-sky-400 to-blue-500 text-slate-950 shadow-lg shadow-sky-500/25">
-                  <Icon icon="solar:buildings-3-bold-duotone" className="h-7 w-7" />
-                </div>
-                <div>
-                  <Link href="/dashboard" className="text-lg font-semibold tracking-tight text-white">
-                    ERP Orbit
-                  </Link>
-                  <p className="mt-1 text-xs text-[var(--text-sidebar-muted)]">Operations and payroll cockpit</p>
-                </div>
+            <div className="flex items-center gap-3 rounded-2xl bg-white/5 p-3 backdrop-blur-sm ring-1 ring-white/10">
+              <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-sky-400 to-blue-500 text-slate-950 shadow-lg shadow-sky-500/25">
+                <Icon icon="solar:buildings-3-bold-duotone" className="h-6 w-6" />
+              </div>
+              <div className="min-w-0">
+                <Link href="/dashboard" className="block truncate text-base font-bold tracking-tight text-white">
+                  ERP Orbit
+                </Link>
+                <p className="truncate text-[10px] text-[var(--text-sidebar-muted)]">Operations cockpit</p>
               </div>
             </div>
             <button
               onClick={onClose}
-              className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white/5 text-[var(--text-sidebar-muted)] lg:hidden"
+              className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/5 text-[var(--text-sidebar-muted)] ring-1 ring-white/10 lg:hidden"
             >
               <Icon icon="solar:close-circle-bold-duotone" className="h-6 w-6" />
             </button>
           </div>
 
-          <nav className="relative mt-6 flex flex-1 flex-col gap-2 overflow-y-auto pr-1">
+          <nav className="sidebar-scrollbar relative mt-6 flex flex-1 flex-col gap-2 overflow-y-auto pr-1">
             {loading ? (
               <p className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-[var(--text-sidebar-muted)]">
                 Loading menu…
@@ -123,33 +121,35 @@ export function Sidebar({ isOpen, onClose }: { isOpen?: boolean; onClose?: () =>
             })}
           </nav>
 
-          <div className="relative rounded-[28px] border border-white/10 bg-white/5 p-5 backdrop-blur">
+          <div className="relative mt-auto border-t border-white/10 pt-4">
             {user ? (
-              <Link
-                href="/profile"
-                onClick={onClose}
-                className="mb-4 flex items-center gap-3 rounded-2xl p-2 transition-colors hover:bg-white/10"
-              >
-                <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white/10 text-cyan-300">
-                  <Icon icon="solar:user-circle-bold-duotone" className="h-6 w-6" />
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-white">{user.name}</p>
-                  <p className="text-xs uppercase tracking-[0.18em] text-[var(--text-sidebar-muted)]">
-                    {user.role}
-                  </p>
-                </div>
-              </Link>
-            ) : null}
+              <div className="flex items-center gap-2 rounded-2xl bg-white/5 p-2 backdrop-blur-sm">
+                <Link
+                  href="/profile"
+                  onClick={onClose}
+                  className="group flex flex-1 items-center gap-3 overflow-hidden rounded-xl px-2 py-1.5 transition-colors hover:bg-white/10"
+                >
+                  <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-tr from-cyan-500/20 to-blue-500/20 text-cyan-300 ring-1 ring-white/10 group-hover:ring-cyan-500/30">
+                    <Icon icon="solar:user-circle-bold-duotone" className="h-6 w-6" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm font-semibold text-white">{user.name}</p>
+                    <p className="truncate text-[10px] uppercase tracking-wider text-[var(--text-sidebar-muted)]">
+                      {user.role}
+                    </p>
+                  </div>
+                </Link>
 
-            <button
-              type="button"
-              onClick={logout}
-              className="flex w-full items-center justify-center gap-2 rounded-2xl border border-white/10 bg-slate-950/30 px-4 py-3 text-sm font-semibold text-slate-100 transition hover:bg-slate-950/60"
-            >
-              <Icon icon="solar:logout-2-bold-duotone" className="h-5 w-5" />
-              Log out
-            </button>
+                <button
+                  type="button"
+                  onClick={logout}
+                  title="Log out"
+                  className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-slate-950/30 text-slate-400 transition hover:bg-rose-500/20 hover:text-rose-400 hover:ring-1 hover:ring-rose-500/30"
+                >
+                  <Icon icon="solar:logout-2-bold-duotone" className="h-5 w-5" />
+                </button>
+              </div>
+            ) : null}
           </div>
         </div>
       </aside>

@@ -14,6 +14,8 @@ func RegisterRoutes(e *echo.Echo, app *App) {
 	api := e.Group("/api")
 	api.POST("/register", app.HandleRegister)
 	api.POST("/login", app.HandleLogin)
+	api.POST("/forgot-password", app.HandleForgotPassword)
+	api.POST("/reset-password", app.HandleResetPassword)
 
 	protected := api.Group("")
 	protected.Use(app.AuthMiddleware)

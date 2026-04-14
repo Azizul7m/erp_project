@@ -164,6 +164,8 @@ func RunMigrations(db *sql.DB) error {
 			created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 		)`,
 		`ALTER TABLE employees ADD COLUMN IF NOT EXISTS user_id BIGINT UNIQUE REFERENCES users(id) ON DELETE SET NULL`,
+		`ALTER TABLE users ADD COLUMN IF NOT EXISTS reset_token TEXT`,
+		`ALTER TABLE users ADD COLUMN IF NOT EXISTS reset_expiry TIMESTAMPTZ`,
 	}
 
 	for _, stmt := range statements {

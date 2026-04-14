@@ -1,8 +1,11 @@
 package api
 
 import (
+	"crypto/rand"
 	"database/sql"
+	"encoding/hex"
 	"errors"
+	"fmt"
 	"net/http"
 	"strings"
 	"time"
@@ -216,4 +219,93 @@ func (app *App) issueToken(userID int64, role string) (string, error) {
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString(app.JWTSecret)
+}
+
+func (app *App) HandleForgotPassword(c echo.Context) error {
+	var input struct {
+		Email string `json:"email"`
+	}
+	if err := c.Bind(&input); err != nil {
+		return badRequest(c, "invalid request body")
+	}
+
+	email := strings.TrimSpace(strings.ToLower(input.Email))
+	if email == "" {
+		return badRequest(c, "email is required")
+	}
+
+	var userID int64
+	err := app.DB.QueryRow("SELECT id FROM users WHERE email = $1", email).Scan(&userID)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			// For security, don't reveal that the user doesn't exist
+			return c.JSON(http.StatusOK, map[string]string{"message": "If an account with that email exists, a reset link has been sent."})
+		}
+		return serverError(c, err)
+	}
+
+	token := generateToken(32)
+	expiry := time.Now().Add(1 * time.Hour)
+
+	_, err = app.DB.Exec(
+		"UPDATE users SET reset_token = $1, reset_expiry = $2 WHERE id = $3",
+		token, expiry, userID,
+	)
+	if err != nil {
+		return serverError(c, err)
+	}
+
+	// In a real app, send an email here.
+	fmt.Printf("Password reset token for %s: %s\n", email, token)
+
+	return c.JSON(http.StatusOK, map[string]string{"message": "If an account with that email exists, a reset link has been sent."})
+}
+
+func (app *App) HandleResetPassword(c echo.Context) error {
+	var input struct {
+		Token    string `json:"token"`
+		Password string `json:"password"`
+	}
+	if err := c.Bind(&input); err != nil {
+		return badRequest(c, "invalid request body")
+	}
+
+	if input.Token == "" || len(input.Password) < 8 {
+		return badRequest(c, "token and password (min 8 chars) are required")
+	}
+
+	var userID int64
+	err := app.DB.QueryRow(
+		"SELECT id FROM users WHERE reset_token = $1 AND reset_expiry > $2",
+		input.Token, time.Now(),
+	).Scan(&userID)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return badRequest(c, "invalid or expired token")
+		}
+		return serverError(c, err)
+	}
+
+	passwordHash, err := bcrypt.GenerateFromPassword([]byte(input.Password), bcrypt.DefaultCost)
+	if err != nil {
+		return serverError(c, err)
+	}
+
+	_, err = app.DB.Exec(
+		"UPDATE users SET password_hash = $1, password = $1, reset_token = NULL, reset_expiry = NULL WHERE id = $2",
+		string(passwordHash), userID,
+	)
+	if err != nil {
+		return serverError(c, err)
+	}
+
+	return c.JSON(http.StatusOK, map[string]string{"message": "Password has been reset successfully."})
+}
+
+func generateToken(length int) string {
+	b := make([]byte, length)
+	if _, err := rand.Read(b); err != nil {
+		return ""
+	}
+	return hex.EncodeToString(b)
 }
